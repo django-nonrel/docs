@@ -1,0 +1,193 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Django-nonrel - NoSQL support for Django &mdash; Django-nonrel v0 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Django-nonrel v0 documentation" href="../index.html" />
+    <link rel="next" title="Django Toolbox" href="djangotoolbox.html" />
+    <link rel="prev" title="django-mediagenerator" href="django-mediagenerator asset manager.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="djangotoolbox.html" title="Django Toolbox"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="django-mediagenerator asset manager.html" title="django-mediagenerator"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Django-nonrel v0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="django-nonrel-nosql-support-for-django">
+<h1>Django-nonrel - NoSQL support for Django<a class="headerlink" href="#django-nonrel-nosql-support-for-django" title="Permalink to this headline">¶</a></h1>
+<p>Django-nonrel is an independent branch of Django that adds NoSQL database support to the ORM. The long-term goal is to add NoSQL support to the official Django release. Take a look at the documentation below for more information.</p>
+<ul class="project-links">
+   <li><a href="#documentation">Documentation</a></li>
+   <li><a href="http://bitbucket.org/wkornewald/django-nonrel/src">Source</a></li>
+   <li><a href="http://bitbucket.org/wkornewald/django-nonrel/get/tip.zip">Download</a></li>
+   <li><a href="http://groups.google.com/group/django-non-relational">Discussion group</a></li>
+   <li><a href="/">Blog</a></li>
+</ul><div class="section" id="why-django-on-nosql">
+<h2>Why Django on NoSQL<a class="headerlink" href="#why-django-on-nosql" title="Permalink to this headline">¶</a></h2>
+<p>We believe that development on non-relational databases is unnecessarily unproductive:</p>
+<ul class="simple">
+<li>you can&#8217;t reuse code written for other non-relational DBs even if they&#8217;re very similar</li>
+<li>you can&#8217;t reuse code written for SQL DBs even if it could actually run unmodified on a non-relational DB</li>
+<li>you have to manually maintain indexes with hand-written code (denormalization, etc.)</li>
+<li>you have to manually write code for merging the results of multiple queries (JOINs, <tt class="docutils literal"><span class="pre">select_related()</span></tt>, etc.)</li>
+<li>some databases are coupled to a specific provider (App Engine, SimpleDB), so you&#8217;re locked into their hosting solution and can&#8217;t easily move away if at some point you need something that&#8217;s impossible on their platform</li>
+</ul>
+<p>How can we fix the situation? Basically, we need a powerful abstraction that automates all the manual indexing work and provides an advanced query API which simplifies common nonrel development patterns. The Django ORM is such an abstraction and it fits our goals pretty well. It even works with SQL and thus allows to reuse existing code written for SQL DBs.</p>
+<p>Django-nonrel is in fact only a small patch to Django that fixes a few assumptions (e.g.: <tt class="docutils literal"><span class="pre">AutoField</span></tt> might not be an integer). The real work is done by <a class="reference external" href="http://www.allbuttonspressed.com/projects/django-dbindexer">django-dbindexer</a>. The dbindexer will automatically take care of denormalization, JOINs, and other important features in the future too. Currently, it extends the NoSQL DB&#8217;s native query language with support for filters like <tt class="docutils literal"><span class="pre">__month</span></tt> and <tt class="docutils literal"><span class="pre">__icontains</span></tt> and adds support for simple JOINs. If you want to stay up-to-date with our progress you should <a class="reference external" href="http://feeds.feedburner.com/AllButtonsPressed">subscribe</a> to the <a class="reference external" href="/blog/django">Django-nonrel blog</a> for the latest news and tutorials.</p>
+<p>This page hosts general information that is independent of the backend. You should also take a look at the <a class="reference external" href="/blog/django/2010/02/4-things-to-know-for-NoSQL-Django-coders">4 things to know for NoSQL Django coders</a> blog post for practical examples.</p>
+<p>The App Engine documentation is hosted on the <a class="reference external" href="/projects/djangoappengine">djangoappengine</a> project site. We&#8217;ve also published some information in the <a class="reference external" href="/blog/django/2010/01/Native-Django-on-App-Engine">Django on App Engine</a> blog post.</p>
+<p>The MongoDB backend is introduced in the <a class="reference external" href="/blog/django/2010/05/MongoDB-backend-for-Django-nonrel-released">MongoDB backend for Django-nonrel</a> blog post.</p>
+<p>Backends for <a class="reference external" href="http://github.com/aparo/django-elasticsearch">ElasticSearch</a> and <a class="reference external" href="http://github.com/vaterlaus/django_cassandra_backend">Cassandra</a> are also in development.</p>
+</div>
+<div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="differences-to-django">
+<h2>Differences to Django<a class="headerlink" href="#differences-to-django" title="Permalink to this headline">¶</a></h2>
+<p>Django should mostly behave as described in the <a class="reference external" href="http://docs.djangoproject.com/">Django documentation</a>. You can run Django-nonrel in combined SQL and NoSQL multi-database setups without any problems. Whenever possible, we&#8217;ll try to reuse existing Django APIs or at least provide our own APIs that abstract away the platform-specific API, so you can write portable, database-independent code. There might be a few exceptions and you should consult the respective backend documentation (e.g., <a class="reference external" href="/projects/djangoappengine">djangoappengine</a>) for more details. Here are a few general rules which can help you write better code:</p>
+<p>Some backends (e.g., MongoDB) use a string instead of an integer for <tt class="docutils literal"><span class="pre">AutoField</span></tt>. If you want to be on the safe side always write code and urlpatterns that would work with both strings and integers. Note that <tt class="docutils literal"><span class="pre">QuerySet</span></tt> automatically converts strings to integers where necessary, so you don&#8217;t need to deal with that in your code.</p>
+<p>There is no integrity guarantee. When deleting a model instance the related objects will <strong>not</strong> be deleted. This had to be done because such a deletion process can take too much time. We might solve this in a later release.</p>
+<p>JOINs don&#8217;t work unless you use <a class="reference external" href="http://www.allbuttonspressed.com/projects/django-dbindexer">django-dbindexer</a>, but even then they&#8217;re very limited at the moment. Without dbindexer, queries can only be executed on one single model (filters can&#8217;t span relationships like <tt class="docutils literal"><span class="pre">user__username=...</span></tt>).</p>
+<p>You can&#8217;t use Django&#8217;s transactions API. If your particular DB supports a special kind of transaction (e.g., <tt class="docutils literal"><span class="pre">run_in_transaction()</span></tt> on App Engine) you have to use the platform-specific functions.</p>
+<p>Not all DBs provide strong consistency. If you want your code to be fully portable you should assume an eventual consistency model. For example, recently App Engine introduced an eventually-consistent high-replication datastore which is now the preferred DB type because it provides very high availability. Strongly consistent operations should be implemented via <tt class="docutils literal"><span class="pre">QuerySet.update()</span></tt> instead of <tt class="docutils literal"><span class="pre">Model.save()</span></tt> (unless you use <tt class="docutils literal"><span class="pre">run_in_transaction()</span></tt> on App Engine, of course).</p>
+</div>
+<div class="section" id="workarounds">
+<h2>Workarounds<a class="headerlink" href="#workarounds" title="Permalink to this headline">¶</a></h2>
+<p>You can only edit users in the admin interface if you add &#8220;djangotoolbox&#8221; to your <tt class="docutils literal"><span class="pre">INSTALLED_APPS</span></tt>. Otherwise you&#8217;ll get an exception about an unsupported query which requires JOINs.</p>
+<p>Florian Hahn has also written an <a class="reference external" href="http://bitbucket.org/fhahn/django-permission-backend-nonrel">authentication backend</a> which provides permission support on non-relational backends. You should use that backend if you want to use Django&#8217;s permission system.</p>
+</div>
+<div class="section" id="writing-a-backend">
+<h2>Writing a backend<a class="headerlink" href="#writing-a-backend" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference external" href="http://www.allbuttonspressed.com/blog/django/2010/04/Writing-a-non-relational-Django-backend">backend template</a> provides a simple starting point with simple code samples, so you understand what each function does.</p>
+</div>
+<div class="section" id="sample-projects">
+<h2>Sample projects<a class="headerlink" href="#sample-projects" title="Permalink to this headline">¶</a></h2>
+<p>You can use <a class="reference external" href="/projects/allbuttonspressed">allbuttonspressed</a> or <a class="reference external" href="http://bitbucket.org/wkornewald/django-testapp">django-testapp</a> as starting points to see what a nonrel-compatible project looks like.</p>
+</div>
+<div class="section" id="internals">
+<h2>Internals<a class="headerlink" href="#internals" title="Permalink to this headline">¶</a></h2>
+<p>Django-nonrel is based on Django 1.3. The modifications to Django are minimal (maybe less than 100 lines). Backends can override the <tt class="docutils literal"><span class="pre">save()</span></tt> process, so no distinction between <tt class="docutils literal"><span class="pre">INSERT</span></tt> and <tt class="docutils literal"><span class="pre">UPDATE</span></tt> is made and so there is no unnecessary <tt class="docutils literal"><span class="pre">exists()</span></tt> check in <tt class="docutils literal"><span class="pre">save()</span></tt>. Also, deletion of related objects is disabled on NoSQL because it conflicts with transaction support at least on App Engine. These are the most important changes we&#8217;ve made. The actual DB abstraction is handled by <a class="reference external" href="http://www.allbuttonspressed.com/projects/django-dbindexer">django-dbindexer</a> and it will stay a separate component even after NoSQL support is added to the official Django release.</p>
+</div>
+<div class="section" id="contributors">
+<h2>Contributors<a class="headerlink" href="#contributors" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Alberto Paro</li>
+<li>Andi Albrecht</li>
+<li>Flavio Percoco Premoli</li>
+<li>Florian Hahn</li>
+<li>Jonas Haag</li>
+<li>Kyle Finley</li>
+<li>George Karpenkov</li>
+<li>Mariusz Kryński</li>
+<li>Matt Bierner</li>
+<li>Thomas Wanschik</li>
+<li>Waldemar Kornewald</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Django-nonrel - NoSQL support for Django</a><ul>
+<li><a class="reference internal" href="#why-django-on-nosql">Why Django on NoSQL</a></li>
+<li><a class="reference internal" href="#documentation">Documentation</a></li>
+<li><a class="reference internal" href="#differences-to-django">Differences to Django</a></li>
+<li><a class="reference internal" href="#workarounds">Workarounds</a></li>
+<li><a class="reference internal" href="#writing-a-backend">Writing a backend</a></li>
+<li><a class="reference internal" href="#sample-projects">Sample projects</a></li>
+<li><a class="reference internal" href="#internals">Internals</a></li>
+<li><a class="reference internal" href="#contributors">Contributors</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="django-mediagenerator asset manager.html"
+                        title="previous chapter">django-mediagenerator</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="djangotoolbox.html"
+                        title="next chapter">Django Toolbox</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/content/Django-nonrel - NoSQL support for Django.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="djangotoolbox.html" title="Django Toolbox"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="django-mediagenerator asset manager.html" title="django-mediagenerator"
+             >previous</a> |</li>
+        <li><a href="../index.html">Django-nonrel v0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Tom Brander.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

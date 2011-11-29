@@ -1,0 +1,493 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>django-mediagenerator &mdash; Django-nonrel v0 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Django-nonrel v0 documentation" href="../index.html" />
+    <link rel="next" title="Django-nonrel - NoSQL support for Django" href="Django-nonrel - NoSQL support for Django.html" />
+    <link rel="prev" title="django-filetransfers" href="django-filetransfers - File upload-download abstraction.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="Django-nonrel - NoSQL support for Django.html" title="Django-nonrel - NoSQL support for Django"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="django-filetransfers - File upload-download abstraction.html" title="django-filetransfers"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Django-nonrel v0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="django-mediagenerator">
+<h1>django-mediagenerator<a class="headerlink" href="#django-mediagenerator" title="Permalink to this headline">¶</a></h1>
+<p>Improve your user experience with amazingly fast page loads by combining, compressing, and versioning your JavaScript &amp; CSS files and images. django-mediagenerator eliminates unnecessary HTTP requests and maximizes cache usage. Also, it provides lots of advanced features required for building HTML5 web applications (e.g. HTML5 offline manifests, Sass support, etc.).</p>
+<p>Take a look at the <a class="reference external" href="http://djangopackages.com/grids/g/asset-managers/">feature comparison</a> for a quick overview and if you like django-mediagenerator please click the <tt class="docutils literal"><span class="pre">I</span> <span class="pre">use</span> <span class="pre">this!</span></tt> button on that page. Thank you!</p>
+<ul class="project-links">
+  <li><a href="http://pypi.python.org/pypi/django-mediagenerator">Download</a></li>
+  <li><a href="http://bitbucket.org/wkornewald/django-mediagenerator/src">Source</a></li>
+  <li><a href="/blog/django">Blog</a></li>
+</ul><div class="section" id="tutorials">
+<h2>Tutorials<a class="headerlink" href="#tutorials" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Getting started: <a class="reference external" href="/blog/django/2010/08/django-mediagenerator-total-asset-management">django-mediagenerator: total asset management</a></li>
+<li><a class="reference external" href="/blog/django/2010/08/Using-Sass-with-django-mediagenerator">Using Sass with django-mediagenerator</a></li>
+<li><a class="reference external" href="/blog/django/2010/11/Offline-HTML5-canvas-app-in-Python-with-django-mediagenerator-Part-1-pyjs">Offline HTML5 canvas app in Python with django-mediagenerator, Part 1: pyjs</a></li>
+<li><a class="reference external" href="/blog/django/2010/11/Offline-HTML5-canvas-app-in-Python-with-django-mediagenerator-Part-2-Drawing">Offline HTML5 canvas app in Python with django-mediagenerator, Part 2: Drawing</a></li>
+<li><a class="reference external" href="/blog/django/2010/11/HTML5-offline-manifests-with-django-mediagenerator">HTML5 offline manifests with django-mediagenerator</a></li>
+</ul>
+</div>
+<div class="section" id="faq">
+<h2>FAQ<a class="headerlink" href="#faq" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="q-how-does-it-relate-to-django-staticfiles-django-contrib-staticfiles">
+<h2>Q: How does it relate to django-staticfiles / django.contrib.staticfiles?<a class="headerlink" href="#q-how-does-it-relate-to-django-staticfiles-django-contrib-staticfiles" title="Permalink to this headline">¶</a></h2>
+<p>django-mediagenerator is a complete standalone asset manager which replaces django-staticfiles. You can still use both in the same project if you really need to, but that&#8217;s very rarely the case (e.g. during a gradual transition from django-staticfiles to django-mediagenerator).</p>
+</div>
+<div class="section" id="q-what-are-the-perfect-caching-headers">
+<h2>Q: What are the perfect caching headers?<a class="headerlink" href="#q-what-are-the-perfect-caching-headers" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Disable ETags because they cause unnecessary <tt class="docutils literal"><span class="pre">If-modified-since</span></tt> requests.</li>
+<li>Use <tt class="docutils literal"><span class="pre">Cache-Control:</span> <span class="pre">public,</span> <span class="pre">max-age=31536000</span></tt></li>
+</ul>
+</div>
+<div class="section" id="tip-how-to-include-ie-specific-stylesheets">
+<h2>Tip: How to include IE-specific stylesheets<a class="headerlink" href="#tip-how-to-include-ie-specific-stylesheets" title="Permalink to this headline">¶</a></h2>
+<p>Imagine you have several stylesheets combined into <tt class="docutils literal"><span class="pre">main.css</span></tt> bundle. Now imagine you also have an extra stylesheet for Internet Explorer called <tt class="docutils literal"><span class="pre">ie.css</span></tt>. Most websites include their IE-specific stylesheet with an additional <tt class="docutils literal"><span class="pre">&lt;link</span> <span class="pre">/&gt;</span></tt> tag using conditional HTML. The problem with this solution is that IE users have to wait for two requests: one for <tt class="docutils literal"><span class="pre">main.css</span></tt> and another one for <tt class="docutils literal"><span class="pre">ie.css</span></tt>. Can this be done more efficiently?</p>
+<p>Yes! Create two CSS bundles (<tt class="docutils literal"><span class="pre">main-ie.css</span></tt> with <tt class="docutils literal"><span class="pre">ie.css</span></tt> and <tt class="docutils literal"><span class="pre">main.css</span></tt> without <tt class="docutils literal"><span class="pre">ie.css</span></tt>) in your settings. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">_base_main_bundle</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s">&#39;css/reset.css&#39;</span><span class="p">,</span>
+    <span class="s">&#39;css/design.css&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">MEDIA_BUNDLES</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">(</span><span class="s">&#39;main.css&#39;</span><span class="p">,)</span>
+        <span class="o">+</span> <span class="n">_base_main_bundle</span><span class="p">,</span>
+    <span class="p">(</span><span class="s">&#39;main-ie.css&#39;</span><span class="p">,)</span>
+        <span class="o">+</span> <span class="n">_base_main_bundle</span>
+        <span class="o">+</span> <span class="p">(</span><span class="s">&#39;ie.css&#39;</span><span class="p">,),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Then, use this conditional comment sequence to include the bundles:</p>
+<div class="highlight-django"><div class="highlight"><pre><span class="x">&lt;!--[if (!IE)|(gte IE 8)]&gt;&lt;!--&gt; </span><span class="cp">{%</span> <span class="k">include_media</span> <span class="s1">&#39;main.css&#39;</span> <span class="cp">%}</span><span class="x"> &lt;!--&lt;![endif]--&gt;</span>
+<span class="x">&lt;!--[if lt IE 8]&gt; </span><span class="cp">{%</span> <span class="k">include_media</span> <span class="s1">&#39;main-ie.css&#39;</span> <span class="cp">%}</span><span class="x"> &lt;![endif]--&gt;</span>
+</pre></div>
+</div>
+<p>Now every browser will only make one single request. Cool, isn&#8217;t it?</p>
+<p>In the example above only IE6 and IE7 get special treatment. IE8 loads the same stylesheet as all other browsers. Of course you can extend the example to serve different stylesheets for all the different IE versions.</p>
+</div>
+<div class="section" id="reference">
+<h2>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="settings">
+<h2>settings<a class="headerlink" href="#settings" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="media-bundles">
+<h2>MEDIA_BUNDLES<a class="headerlink" href="#media-bundles" title="Permalink to this headline">¶</a></h2>
+<p>This defines all JavaScript and CSS bundles as a list of tuples where the first tuple entry denotes the bundle output name and the following tuple entries denote the input file names:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">MEDIA_BUNDLES</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">(</span><span class="s">&#39;main.css&#39;</span><span class="p">,</span> <span class="c"># bundle name</span>
+        <span class="c"># input files</span>
+        <span class="s">&#39;css/reset.css&#39;</span><span class="p">,</span>
+        <span class="s">&#39;css/design.css&#39;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;main.js&#39;</span><span class="p">,</span>
+        <span class="s">&#39;js/jquery.js&#39;</span><span class="p">,</span>
+        <span class="s">&#39;js/jquery.autocomplete.js&#39;</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Internally, all input file names are converted to filters. Instead of file names you can also be more explicit and specify filters as dicts:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">MEDIA_BUNDLES</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">(</span><span class="s">&#39;main.css&#39;</span><span class="p">,</span>
+        <span class="p">{</span><span class="s">&#39;filter&#39;</span><span class="p">:</span> <span class="s">&#39;mediagenerator.generators.bundles.base.FileFilter&#39;</span><span class="p">,</span>
+          <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;css/reset.css&#39;</span><span class="p">},</span>
+        <span class="p">{</span><span class="s">&#39;filter&#39;</span><span class="p">:</span> <span class="s">&#39;mediagenerator.generators.bundles.base.FileFilter&#39;</span><span class="p">,</span>
+          <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;css/design.css&#39;</span><span class="p">},</span>
+    <span class="p">),</span>
+    <span class="c"># ...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The dict notation allows for using advanced features and configuring individual filters. You will rarely need to use it explicitly, though.</p>
+</div>
+<div class="section" id="root-media-filters">
+<h2>ROOT_MEDIA_FILTERS<a class="headerlink" href="#root-media-filters" title="Permalink to this headline">¶</a></h2>
+<p>Defines which filters should be applied bundles of a certain file type. Note that these filters are applied <strong>after</strong> the input files got combined/bundled and thus is primarily useful for compressors and URL rewriters and other post-processing filters. Filters on input files need to be specified as documented in <a class="reference internal" href="#media-bundles">MEDIA_BUNDLES</a>.</p>
+<p>This is a dict where the key denotes the file type and the value is either a string or a tuple of strings denoting the filters that should be applied:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">ROOT_MEDIA_FILTERS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;js&#39;</span><span class="p">:</span> <span class="s">&#39;mediagenerator.filters.closure.Closure&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Filter names are always converted to dicts. The filter above in combination with the <tt class="docutils literal"><span class="pre">MEDIA_BUNDLES</span></tt> setting from above would become:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">MEDIA_BUNDLES</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">(</span><span class="s">&#39;main.js&#39;</span><span class="p">,</span>
+        <span class="p">{</span><span class="s">&#39;filter&#39;</span><span class="p">:</span> <span class="s">&#39;mediagenerator.filters.closure.Closure&#39;</span><span class="p">,</span>
+          <span class="s">&#39;input&#39;</span><span class="p">:</span> <span class="p">[</span>
+              <span class="s">&#39;js/jquery.js&#39;</span><span class="p">,</span>
+              <span class="s">&#39;js/jquery.autocomplete.js&#39;</span>
+          <span class="p">]}</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Internally, the media generator uses a few additional filters which get inserted between the input files and <tt class="docutils literal"><span class="pre">ROOT_MEDIA_FILTERS</span></tt>. For example, one of those filter takes care of concatenating/combining all input files.</p>
+</div>
+<div class="section" id="media-generators">
+<h2>MEDIA_GENERATORS<a class="headerlink" href="#media-generators" title="Permalink to this headline">¶</a></h2>
+<p>All low-level backends derive from the <tt class="docutils literal"><span class="pre">mediagenerator.base.Generator</span></tt> class. This setting defines the list of generators used in your project. Its default value is:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">MEDIA_GENERATORS</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s">&#39;mediagenerator.generators.copyfiles.CopyFiles&#39;</span><span class="p">,</span>
+    <span class="s">&#39;mediagenerator.generators.bundles.Bundles&#39;</span><span class="p">,</span>
+    <span class="s">&#39;mediagenerator.generators.manifest.Manifest&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">Bundles</span></tt> generator in that list takes care of handling <tt class="docutils literal"><span class="pre">MEDIA_BUNDLES</span></tt>. As you can see, even bundle handling is just a normal generator backend. Note that bundle filters which are used in <tt class="docutils literal"><span class="pre">MEDIA_BUNDLES</span></tt> are a different type of backend. The <tt class="docutils literal"><span class="pre">Bundle</span></tt> generator provides a <tt class="docutils literal"><span class="pre">mediagenerator.generators.bundles.base.Filter</span></tt> backend class for those.</p>
+</div>
+<div class="section" id="global-media-dirs">
+<h2>GLOBAL_MEDIA_DIRS<a class="headerlink" href="#global-media-dirs" title="Permalink to this headline">¶</a></h2>
+<p>Tuple of paths which should be added to the media search path.</p>
+</div>
+<div class="section" id="ignore-app-media-dirs">
+<h2>IGNORE_APP_MEDIA_DIRS<a class="headerlink" href="#ignore-app-media-dirs" title="Permalink to this headline">¶</a></h2>
+<p>Tuple of app names for which the &#8220;static&#8221; folder shouldn&#8217;t be added to the media search path.</p>
+</div>
+<div class="section" id="dev-media-url">
+<h2>DEV_MEDIA_URL<a class="headerlink" href="#dev-media-url" title="Permalink to this headline">¶</a></h2>
+<p>The URL for serving media when <tt class="docutils literal"><span class="pre">MEDIA_DEV_MODE</span></tt> is <tt class="xref docutils literal"><span class="pre">False</span></tt>.</p>
+</div>
+<div class="section" id="production-media-url">
+<h2>PRODUCTION_MEDIA_URL<a class="headerlink" href="#production-media-url" title="Permalink to this headline">¶</a></h2>
+<p>The URL for serving media when <tt class="docutils literal"><span class="pre">MEDIA_DEV_MODE</span></tt> is <tt class="xref docutils literal"><span class="pre">True</span></tt>.</p>
+</div>
+<div class="section" id="media-dev-mode">
+<h2>MEDIA_DEV_MODE<a class="headerlink" href="#media-dev-mode" title="Permalink to this headline">¶</a></h2>
+<p>A boolean which defines whether we&#8217;re on the development or production server. If <tt class="xref docutils literal"><span class="pre">True</span></tt> media files aren&#8217;t combined and compressed in order to simplify debugging.</p>
+</div>
+<div class="section" id="settings-for-non-standard-project-structures">
+<h2>Settings for non-standard project structures<a class="headerlink" href="#settings-for-non-standard-project-structures" title="Permalink to this headline">¶</a></h2>
+<p>These settings might be required for certain &#8220;franchised&#8221; project structures. The need for these settings is an indicator that maybe (!) you&#8217;re not using a clean project structure and that the dependencies in your project might be turned upside down. Nevertheless, there are blog posts endorsing such a structure and people with a pretty large code base depend on it. So, here are the settings for overriding the output locations of the generated media files:</p>
+<ul class="simple">
+<li><strong>GENERATED_MEDIA_DIR</strong>: Overrides the path of the <tt class="docutils literal"><span class="pre">_generated_media</span></tt> folder.</li>
+<li><strong>GENERATED_MEDIA_NAMES_MODULE</strong>: Overrides the import path of the <tt class="docutils literal"><span class="pre">_generated_media_names</span></tt> module.</li>
+<li><strong>GENERATED_MEDIA_NAMES_FILE</strong>: Overrides the path (on the file system) to the <tt class="docutils literal"><span class="pre">_generated_media_names</span></tt> module.</li>
+</ul>
+</div>
+<div class="section" id="templatetags">
+<h2>Templatetags<a class="headerlink" href="#templatetags" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">media</span></tt> template library contains all tags needed for working with media files. You can load the library like this:</p>
+<div class="highlight-django"><div class="highlight"><pre><span class="cp">{%</span> <span class="k">load</span> <span class="nv">media</span> <span class="cp">%}</span><span class="x"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="including-js-and-css">
+<h2>Including JS and CSS<a class="headerlink" href="#including-js-and-css" title="Permalink to this headline">¶</a></h2>
+<p>You can include JS and CSS bundles using:</p>
+<div class="highlight-django"><div class="highlight"><pre><span class="x">&lt;head&gt;</span>
+<span class="x">...</span>
+<span class="cp">{%</span> <span class="k">include_media</span> <span class="s1">&#39;main.css&#39;</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">...</span>
+<span class="x">&lt;/head&gt;</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">include_media</span></tt> tag automatically generates the required <tt class="docutils literal"><span class="pre">&lt;link&gt;</span></tt> or <tt class="docutils literal"><span class="pre">&lt;script&gt;</span></tt> HTML code for the respective bundle. In production it generates just a single tag. In development mode it generates multiple tags, one for each file that is part of the bundle.</p>
+<p>You can optionally specify the CSS media type via:</p>
+<div class="highlight-django"><div class="highlight"><pre><span class="cp">{%</span> <span class="k">include_media</span> <span class="s1">&#39;main.css&#39;</span> <span class="nv">media</span><span class="o">=</span><span class="s1">&#39;screen,print&#39;</span> <span class="cp">%}</span><span class="x"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="including-images-and-other-files">
+<h2>Including images and other files<a class="headerlink" href="#including-images-and-other-files" title="Permalink to this headline">¶</a></h2>
+<p>Image URLs can be generated using:</p>
+<div class="highlight-django"><div class="highlight"><pre><span class="x">&lt;img src=&quot;</span><span class="cp">{%</span> <span class="k">media_url</span> <span class="s1">&#39;some/image.png&#39;</span> <span class="cp">%}</span><span class="x">&quot; /&gt;</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">media_url</span></tt> tag only works with assets that consist of a single file (e.g. an image or an HTML offline manifest). It does not work with bundles or other assets which generate into multiple URLs either in development or production mode.</p>
+</div>
+<div class="section" id="image-file-copying">
+<h2>Image/file copying<a class="headerlink" href="#image-file-copying" title="Permalink to this headline">¶</a></h2>
+<p><strong>Generator:</strong> <tt class="docutils literal"><span class="pre">mediagenerator.generators.copyfiles.CopyFiles</span></tt></p>
+<p>You can define the file extensions that should be copied into the <tt class="docutils literal"><span class="pre">_generated_media</span></tt> folder via the <tt class="docutils literal"><span class="pre">COPY_MEDIA_FILETYPES</span></tt> setting which is a tuple of file extensions. Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">COPY_MEDIA_FILETYPES</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;gif&#39;</span><span class="p">,</span> <span class="s">&#39;jpg&#39;</span><span class="p">,</span> <span class="s">&#39;jpeg&#39;</span><span class="p">,</span> <span class="s">&#39;png&#39;</span><span class="p">,</span> <span class="s">&#39;svg&#39;</span><span class="p">,</span> <span class="s">&#39;svgz&#39;</span><span class="p">,</span>
+                                         <span class="s">&#39;ico&#39;</span><span class="p">,</span> <span class="s">&#39;swf&#39;</span><span class="p">,</span> <span class="s">&#39;ttf&#39;</span><span class="p">,</span> <span class="s">&#39;otf&#39;</span><span class="p">,</span> <span class="s">&#39;eot&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>By default, images, Flash files, and fonts are copied.</p>
+<p>Additionally, you can specify a tuple of file name regexes that should be ignored via <tt class="docutils literal"><span class="pre">IGNORE_MEDIA_COPY_PATTERNS</span></tt>.</p>
+<p>All copied files will have a version hash in their file name.</p>
+</div>
+<div class="section" id="closure-compiler">
+<h2>Closure Compiler<a class="headerlink" href="#closure-compiler" title="Permalink to this headline">¶</a></h2>
+<p><strong>Filter:</strong> <tt class="docutils literal"><span class="pre">mediagenerator.filters.closure.Closure</span></tt></p>
+<p>Compresses your JavaScript files via Google&#8217;s Closure Compiler.</p>
+<p>Installation in <tt class="docutils literal"><span class="pre">settings.py</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">ROOT_MEDIA_FILTERS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;js&#39;</span><span class="p">:</span> <span class="s">&#39;mediagenerator.filters.closure.Closure&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">CLOSURE_COMPILER_PATH</span> <span class="o">=</span> <span class="s">&#39;/path/to/closure/compiler&#39;</span>
+</pre></div>
+</div>
+<p>You can also define the compilation level via <tt class="docutils literal"><span class="pre">CLOSURE_COMPILATION_LEVEL</span></tt>. By default this is set to <tt class="docutils literal"><span class="pre">'SIMPLE_OPTIMIZATIONS'</span></tt>.</p>
+</div>
+<div class="section" id="yuicompressor">
+<h2>YUICompressor<a class="headerlink" href="#yuicompressor" title="Permalink to this headline">¶</a></h2>
+<p><strong>Filter:</strong> <tt class="docutils literal"><span class="pre">mediagenerator.filters.closure.Closure</span></tt></p>
+<p>Compresses your JavaScript and CSS files via YUICompressor.</p>
+<p>Installation in <tt class="docutils literal"><span class="pre">settings.py</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">ROOT_MEDIA_FILTERS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;css&#39;</span><span class="p">:</span> <span class="s">&#39;mediagenerator.filters.yuicompressor.YUICompressor&#39;</span><span class="p">,</span>
+    <span class="s">&#39;js&#39;</span><span class="p">:</span> <span class="s">&#39;mediagenerator.filters.yuicompressor.YUICompressor&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">YUICOMPRESSOR_PATH</span> <span class="o">=</span> <span class="s">&#39;/path/to/yuicompressor&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="sass-compass">
+<h2>Sass/Compass<a class="headerlink" href="#sass-compass" title="Permalink to this headline">¶</a></h2>
+<p><strong>Filter:</strong> <tt class="docutils literal"><span class="pre">mediagenerator.filters.sass.Sass</span></tt></p>
+<p>Sass files are automatically detected by their file extension. Simply mention <tt class="docutils literal"><span class="pre">.sass</span></tt> files in <tt class="docutils literal"><span class="pre">MEDIA_BUNDLES</span></tt> exactly like you would with <tt class="docutils literal"><span class="pre">.css</span></tt> files.</p>
+<p>It&#8217;s possible to use features from Compass and its extensions. Run <tt class="docutils literal"><span class="pre">manage.py</span> <span class="pre">importsassframeworks</span></tt> to add the respective files to your project. Extensions can be listed via <tt class="docutils literal"><span class="pre">SASS_FRAMEWORKS</span></tt> in <tt class="docutils literal"><span class="pre">settings.py</span></tt>. For example, this is how you&#8217;d add <tt class="docutils literal"><span class="pre">ninesixty</span></tt> and <tt class="docutils literal"><span class="pre">susy</span></tt> in addition to the default frameworks (<tt class="docutils literal"><span class="pre">compass</span></tt> and <tt class="docutils literal"><span class="pre">blueprint</span></tt>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">SASS_FRAMEWORKS</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s">&#39;compass&#39;</span><span class="p">,</span>
+    <span class="s">&#39;blueprint&#39;</span><span class="p">,</span>
+    <span class="s">&#39;ninesixty&#39;</span><span class="p">,</span>
+    <span class="s">&#39;susy&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that you have to install the Compass binary even if you don&#8217;t use any Sass/Compass frameworks in your project.</p>
+<p>If you use the FireSass Firebug plugin you should set <tt class="docutils literal"><span class="pre">SASS_DEBUG_INFO</span> <span class="pre">=</span> <span class="pre">True</span></tt> in your settings, so additional debug information is emitted for FireSass.</p>
+<p>See also: <a class="reference external" href="/blog/django/2010/08/Using-Sass-with-django-mediagenerator">Using Sass with django-mediagenerator</a></p>
+</div>
+<div class="section" id="clevercss">
+<h2>CleverCSS<a class="headerlink" href="#clevercss" title="Permalink to this headline">¶</a></h2>
+<p><strong>Filter:</strong> <tt class="docutils literal"><span class="pre">mediagenerator.filters.clevercss.CleverCSS</span></tt></p>
+<p>CleverCSS files are automatically detected by their file extension. Simply mention <tt class="docutils literal"><span class="pre">.ccss</span></tt> files in <tt class="docutils literal"><span class="pre">MEDIA_BUNDLES</span></tt> exactly like you would with <tt class="docutils literal"><span class="pre">.css</span></tt> files.</p>
+</div>
+<div class="section" id="coffeescript">
+<h2>CoffeeScript<a class="headerlink" href="#coffeescript" title="Permalink to this headline">¶</a></h2>
+<p><strong>Filter:</strong> <tt class="docutils literal"><span class="pre">mediagenerator.filters.coffeescript.CoffeeScript</span></tt></p>
+<p>CoffeeScript files are automatically detected by their file extension. Simply mention <tt class="docutils literal"><span class="pre">.coffee</span></tt> files in <tt class="docutils literal"><span class="pre">MEDIA_BUNDLES</span></tt> exactly like you would with <tt class="docutils literal"><span class="pre">.js</span></tt> files.</p>
+</div>
+<div class="section" id="accessing-media-urls-from-javascript">
+<h2>Accessing media URLs from JavaScript<a class="headerlink" href="#accessing-media-urls-from-javascript" title="Permalink to this headline">¶</a></h2>
+<p><strong>Filter:</strong> <tt class="docutils literal"><span class="pre">mediagenerator.filters.media_url.MediaURL</span></tt></p>
+<p>Provides JavaScript functions for retrieving the URL of a media file, similar to the <tt class="docutils literal"><span class="pre">{%</span> <span class="pre">media_url</span> <span class="pre">%}</span></tt> template tag.</p>
+<p>Installation in <tt class="docutils literal"><span class="pre">settings.py</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">MEDIA_BUNDLES</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">(</span><span class="s">&#39;main.js&#39;</span><span class="p">,</span>
+        <span class="p">{</span><span class="s">&#39;filter&#39;</span><span class="p">:</span> <span class="s">&#39;mediagenerator.filters.media_url.MediaURL&#39;</span><span class="p">},</span>
+        <span class="s">&#39;js/jquery.js&#39;</span><span class="p">,</span>
+        <span class="s">&#39;js/jquery.autocomplete.js&#39;</span><span class="p">,</span>
+        <span class="c"># ...</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>In your JavaScript code you&#8217;ll then have a <tt class="docutils literal"><span class="pre">media_url()</span></tt> function which returns the URL for a given file. Only files that exist in the <tt class="docutils literal"><span class="pre">_generated_media</span></tt> folder can be resolved this way.</p>
+<p>If you try to resolve a bundle and the bundle consists of multiple files and <tt class="docutils literal"><span class="pre">MEDIA_DEV_MODE</span></tt> is <tt class="xref docutils literal"><span class="pre">True</span></tt> the <tt class="docutils literal"><span class="pre">media_url()</span></tt> function will return a list of (uncombined) URLs instead of a single string. Make sure that your code checks for this case.</p>
+</div>
+<div class="section" id="pyvascript">
+<h2>PyvaScript<a class="headerlink" href="#pyvascript" title="Permalink to this headline">¶</a></h2>
+<p><strong>Filter:</strong> <tt class="docutils literal"><span class="pre">mediagenerator.filters.pyvascript_filter.PyvaScript</span></tt></p>
+<p>PyvaScript files are automatically detected by their file extension. Simply mention <tt class="docutils literal"><span class="pre">.pyva</span></tt> files in <tt class="docutils literal"><span class="pre">MEDIA_BUNDLES</span></tt> exactly like you would with <tt class="docutils literal"><span class="pre">.js</span></tt> files. The PyvaScript standard library can be integrated by using the file name <tt class="docutils literal"><span class="pre">.stdlib.pyva</span></tt>. Here is an example that integrates jQuery, PyvaScript&#8217;s standard library, and your own code (e.g. <tt class="docutils literal"><span class="pre">yourcode.pyva</span></tt>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">MEDIA_BUNDLES</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">(</span><span class="s">&#39;main.js&#39;</span><span class="p">,</span>
+        <span class="s">&#39;jquery.js&#39;</span><span class="p">,</span>
+        <span class="s">&#39;.stdlib.pyva&#39;</span><span class="p">,</span>
+        <span class="s">&#39;yourcode.pyva&#39;</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="python-in-the-browser-todoc">
+<h2>Python in the browser (TODOC)<a class="headerlink" href="#python-in-the-browser-todoc" title="Permalink to this headline">¶</a></h2>
+<p><strong>Filter:</strong> <tt class="docutils literal"><span class="pre">mediagenerator.filters.pyjs_filter.Pyjs</span></tt></p>
+<p>TODO: document me :)</p>
+<p>See also:</p>
+<ul class="simple">
+<li><a class="reference external" href="/blog/django/2010/11/Offline-HTML5-canvas-app-in-Python-with-django-mediagenerator-Part-1-pyjs">Offline HTML5 canvas app in Python with django-mediagenerator, Part 1: pyjs</a></li>
+<li><a class="reference external" href="/blog/django/2010/11/Offline-HTML5-canvas-app-in-Python-with-django-mediagenerator-Part-2-Drawing">Offline HTML5 canvas app in Python with django-mediagenerator, Part 2: Drawing</a></li>
+</ul>
+</div>
+<div class="section" id="html5-offline-manifests-todoc">
+<h2>HTML5 offline manifests (TODOC)<a class="headerlink" href="#html5-offline-manifests-todoc" title="Permalink to this headline">¶</a></h2>
+<p><strong>Generator:</strong> <tt class="docutils literal"><span class="pre">mediagenerator.generators.manifest.Manifest</span></tt></p>
+<p>TODO: document me :)</p>
+<p>See also: <a class="reference external" href="/blog/django/2010/11/HTML5-offline-manifests-with-django-mediagenerator">HTML5 offline manifests with django-mediagenerator</a></p>
+</div>
+<div class="section" id="data-uris-image-sprites-todoc">
+<h2>Data URIs / image sprites (TODOC)<a class="headerlink" href="#data-uris-image-sprites-todoc" title="Permalink to this headline">¶</a></h2>
+<p><strong>Filter:</strong> <tt class="docutils literal"><span class="pre">mediagenerator.filters.cssurl.CSSURL</span></tt></p>
+<p><strong>Filter:</strong> <tt class="docutils literal"><span class="pre">mediagenerator.filters.cssurl.CSSURLFileFilter</span></tt></p>
+<p><strong>Generator:</strong> <tt class="docutils literal"><span class="pre">mediagenerator.generators.mhtml.MHTML</span></tt> (not yet implemented)</p>
+<p>TODO: document me and write a nice tutorial about me :)</p>
+</div>
+<div class="section" id="translations-i18n-bundling-todoc">
+<h2>Translations (i18n) bundling (TODOC)<a class="headerlink" href="#translations-i18n-bundling-todoc" title="Permalink to this headline">¶</a></h2>
+<p><strong>Filter:</strong> <tt class="docutils literal"><span class="pre">mediagenerator.filters.i18n.I18N</span></tt></p>
+<p>TODO: document me and write a nice tutorial about me :)</p>
+</div>
+<div class="section" id="django-templates-todoc">
+<h2>Django templates (TODOC)<a class="headerlink" href="#django-templates-todoc" title="Permalink to this headline">¶</a></h2>
+<p><strong>Filter:</strong> <tt class="docutils literal"><span class="pre">mediagenerator.filters.tempate.Template</span></tt></p>
+<p>Auto-applied to <tt class="docutils literal"><span class="pre">.html</span></tt> files. Uses Django&#8217;s template language to render the contents of the given file. Can also be specified manually for individual files with the explicit dict filter syntax (see <a class="reference internal" href="#media-bundles">MEDIA_BUNDLES</a>). In that case, the input files are listed via <tt class="docutils literal"><span class="pre">input</span></tt>. TODO: document me :)</p>
+</div>
+<div class="section" id="combining-files-in-dev-mode">
+<h2>Combining files in dev mode<a class="headerlink" href="#combining-files-in-dev-mode" title="Permalink to this headline">¶</a></h2>
+<p><strong>Filter:</strong> <tt class="docutils literal"><span class="pre">mediagenerator.filters.concat.Concat</span></tt></p>
+<p>Sometimes you might want to use the repository version of a certain JavaScript framework. Often, these frameworks consist of several individual files which have to be combined in order to work correctly. Since the media generator doesn&#8217;t combine files in development mode you might want to enforce concatenation.</p>
+<p>This example shows how to combine some files of the XUI framework:</p>
+<div class="highlight-python"><pre>MEDIA_BUNDLES = (
+    ('main.js',
+        # XUI and its dependencies
+        'emile.js',
+        {'filter': 'mediagenerator.filters.concat.Concat',
+         'dev_output_name': 'xui.js',
+         'concat_dev_output': True,
+         'input': (
+             'xui/header.js',
+             'xui/base.js',
+             'xui/core/dom.js',
+             'xui/core/event.js',
+             'xui/core/fx.js',
+             'xui/core/style.js',
+             'xui/core/xhr.js',
+             'xui/footer.js',
+         )},</pre>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">concat_dev_ouput</span></tt> option allows to enforce concatenation. The <tt class="docutils literal"><span class="pre">dev_output_name</span></tt> option allows you to specify a nice human-readable file name which will appear in URLs on the development server. This is recommended for debugging purposes.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">django-mediagenerator</a><ul>
+<li><a class="reference internal" href="#tutorials">Tutorials</a></li>
+<li><a class="reference internal" href="#faq">FAQ</a></li>
+<li><a class="reference internal" href="#q-how-does-it-relate-to-django-staticfiles-django-contrib-staticfiles">Q: How does it relate to django-staticfiles / django.contrib.staticfiles?</a></li>
+<li><a class="reference internal" href="#q-what-are-the-perfect-caching-headers">Q: What are the perfect caching headers?</a></li>
+<li><a class="reference internal" href="#tip-how-to-include-ie-specific-stylesheets">Tip: How to include IE-specific stylesheets</a></li>
+<li><a class="reference internal" href="#reference">Reference</a></li>
+<li><a class="reference internal" href="#settings">settings</a></li>
+<li><a class="reference internal" href="#media-bundles">MEDIA_BUNDLES</a></li>
+<li><a class="reference internal" href="#root-media-filters">ROOT_MEDIA_FILTERS</a></li>
+<li><a class="reference internal" href="#media-generators">MEDIA_GENERATORS</a></li>
+<li><a class="reference internal" href="#global-media-dirs">GLOBAL_MEDIA_DIRS</a></li>
+<li><a class="reference internal" href="#ignore-app-media-dirs">IGNORE_APP_MEDIA_DIRS</a></li>
+<li><a class="reference internal" href="#dev-media-url">DEV_MEDIA_URL</a></li>
+<li><a class="reference internal" href="#production-media-url">PRODUCTION_MEDIA_URL</a></li>
+<li><a class="reference internal" href="#media-dev-mode">MEDIA_DEV_MODE</a></li>
+<li><a class="reference internal" href="#settings-for-non-standard-project-structures">Settings for non-standard project structures</a></li>
+<li><a class="reference internal" href="#templatetags">Templatetags</a></li>
+<li><a class="reference internal" href="#including-js-and-css">Including JS and CSS</a></li>
+<li><a class="reference internal" href="#including-images-and-other-files">Including images and other files</a></li>
+<li><a class="reference internal" href="#image-file-copying">Image/file copying</a></li>
+<li><a class="reference internal" href="#closure-compiler">Closure Compiler</a></li>
+<li><a class="reference internal" href="#yuicompressor">YUICompressor</a></li>
+<li><a class="reference internal" href="#sass-compass">Sass/Compass</a></li>
+<li><a class="reference internal" href="#clevercss">CleverCSS</a></li>
+<li><a class="reference internal" href="#coffeescript">CoffeeScript</a></li>
+<li><a class="reference internal" href="#accessing-media-urls-from-javascript">Accessing media URLs from JavaScript</a></li>
+<li><a class="reference internal" href="#pyvascript">PyvaScript</a></li>
+<li><a class="reference internal" href="#python-in-the-browser-todoc">Python in the browser (TODOC)</a></li>
+<li><a class="reference internal" href="#html5-offline-manifests-todoc">HTML5 offline manifests (TODOC)</a></li>
+<li><a class="reference internal" href="#data-uris-image-sprites-todoc">Data URIs / image sprites (TODOC)</a></li>
+<li><a class="reference internal" href="#translations-i18n-bundling-todoc">Translations (i18n) bundling (TODOC)</a></li>
+<li><a class="reference internal" href="#django-templates-todoc">Django templates (TODOC)</a></li>
+<li><a class="reference internal" href="#combining-files-in-dev-mode">Combining files in dev mode</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="django-filetransfers - File upload-download abstraction.html"
+                        title="previous chapter">django-filetransfers</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Django-nonrel - NoSQL support for Django.html"
+                        title="next chapter">Django-nonrel - NoSQL support for Django</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/content/django-mediagenerator asset manager.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="Django-nonrel - NoSQL support for Django.html" title="Django-nonrel - NoSQL support for Django"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="django-filetransfers - File upload-download abstraction.html" title="django-filetransfers"
+             >previous</a> |</li>
+        <li><a href="../index.html">Django-nonrel v0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Tom Brander.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,202 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Writing a non-relational Django backend &mdash; Django-nonrel v0 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Django-nonrel v0 documentation" href="../index.html" />
+    <link rel="prev" title="Managing per-field indexes on App Engine" href="Managing per-field indexes on App Engine.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="Managing per-field indexes on App Engine.html" title="Managing per-field indexes on App Engine"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Django-nonrel v0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="writing-a-non-relational-django-backend">
+<h1>Writing a non-relational Django backend<a class="headerlink" href="#writing-a-non-relational-django-backend" title="Permalink to this headline">¶</a></h1>
+<p>In our <a class="reference external" href="/blog/django/2010/04/SimpleDB-backend-and-JOIN-support">April 1st post</a> we claimed to have a simplified backend API. Well, this wasn&#8217;t true, of course, but yesterday it has become true. The Django ORM is pretty complicated and it takes too much time for contributors to understand all the necessary details. In order to make the process as easy as possible we&#8217;ve implemented a <a class="reference external" href="http://bitbucket.org/wkornewald/backend-template/">backend template</a> which provides a simple starting point for a new backend based on our simplified API. It also contains sample code, so you can better understand what each function does. All places where you have to make changes are marked with &#8220;<tt class="docutils literal"><span class="pre">#</span> <span class="pre">TODO:</span></tt>&#8221; comments. Note, you&#8217;ll need <a class="reference external" href="/projects/djangotoolbox">djangotoolbox</a> which provides the base classes for nonrel backends.</p>
+<p>Let&#8217;s start with <tt class="docutils literal"><span class="pre">base.py</span></tt>. You can use the <tt class="docutils literal"><span class="pre">DatabaseCreation</span></tt> class to define a custom <tt class="docutils literal"><span class="pre">data_types</span></tt> mapping from Django&#8217;s fields to your database types. The types will later be passed to functions which you&#8217;ll have to implement to convert values from and to the DB (<tt class="docutils literal"><span class="pre">convert_value_from_db()</span></tt> and <tt class="docutils literal"><span class="pre">convert_value_to_db()</span></tt>). If the <a class="reference external" href="http://bitbucket.org/wkornewald/djangotoolbox/src/tip/db/creation.py">default values</a> work for you just leave the class untouched.</p>
+<p>Also, if you want to maintain a DB connection we&#8217;d recommend storing it in <tt class="docutils literal"><span class="pre">DatabaseWrapper</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">DatabaseWrapper</span><span class="p">(</span><span class="n">NonrelDatabaseWrapper</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DatabaseWrapper</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+        <span class="o">...</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_connection</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">settings_dict</span><span class="p">[</span><span class="s">&#39;HOST&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings_dict</span><span class="p">[</span><span class="s">&#39;PORT&#39;</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">settings_dict</span><span class="p">[</span><span class="s">&#39;USER&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings_dict</span><span class="p">[</span><span class="s">&#39;PASSWORD&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>The real meat is in <tt class="docutils literal"><span class="pre">compiler.py</span></tt>. Here, you have to define a BackendQuery class which handles query creation and execution. In the constructor you should create a low-level query instance for your connection. Depending on your DB API this might be nothing more than a dict, but let&#8217;s say your DB provides a <tt class="docutils literal"><span class="pre">LowLevelQuery</span></tt> class:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">BackendQuery</span><span class="p">(</span><span class="n">NonrelQuery</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">fields</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BackendQuery</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">compiler</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_query</span> <span class="o">=</span> <span class="n">LowLevelQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">db_connection</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note, <tt class="docutils literal"><span class="pre">self.connection</span></tt> is the <tt class="docutils literal"><span class="pre">DatabaseWrapper</span></tt> instance which is the high-level DB connection object in Django.</p>
+<p>Then, you need to define a function that converts Django&#8217;s filters from Django&#8217;s internal query object (<tt class="docutils literal"><span class="pre">SQLQuery</span></tt>, accessible via <tt class="docutils literal"><span class="pre">self.query</span></tt>) to their counterparts for your DB. This should be done in the <tt class="docutils literal"><span class="pre">add_filters()</span></tt> function. Since quite a few nonrel DBs seem to only support AND queries we provide a default implementation which makes sure that there is no OR filter (well, it has some logic for converting certain OR filters to AND filters). It expects an <tt class="docutils literal"><span class="pre">add_filter()</span></tt> function (without the trailing &#8220;s&#8221;):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@safe_call</span>
+<span class="k">def</span> <span class="nf">add_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">lookup_type</span><span class="p">,</span> <span class="n">negated</span><span class="p">,</span> <span class="n">db_type</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="c"># Emulated/converted lookups</span>
+    <span class="k">if</span> <span class="n">column</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get_meta</span><span class="p">()</span><span class="o">.</span><span class="n">pk</span><span class="o">.</span><span class="n">column</span><span class="p">:</span>
+        <span class="n">column</span> <span class="o">=</span> <span class="s">&#39;_id&#39;</span>
+
+    <span class="k">if</span> <span class="n">negated</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">op</span> <span class="o">=</span> <span class="n">NEGATION_MAP</span><span class="p">[</span><span class="n">lookup_type</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DatabaseError</span><span class="p">(</span><span class="s">&quot;Lookup type </span><span class="si">%r</span><span class="s"> can&#39;t be negated&quot;</span> <span class="o">%</span> <span class="n">lookup_type</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">op</span> <span class="o">=</span> <span class="n">OPERATORS_MAP</span><span class="p">[</span><span class="n">lookup_type</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DatabaseError</span><span class="p">(</span><span class="s">&quot;Lookup type </span><span class="si">%r</span><span class="s"> isn&#39;t supported&quot;</span> <span class="o">%</span> <span class="n">lookup_type</span><span class="p">)</span>
+
+    <span class="c"># Handle special-case lookup types</span>
+    <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">op</span><span class="p">):</span>
+        <span class="n">op</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">op</span><span class="p">(</span><span class="n">lookup_type</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="n">db_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_value_for_db</span><span class="p">(</span><span class="n">db_type</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">db_query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">column</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="n">db_value</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This is just an example implementation. You don&#8217;t have to use the same code. At first, we convert the primary key column to the DB&#8217;s internal reserved column for the primary key. Then, we check if the filter should be negated or not and retrieve the respective DB comparison operator from a mapping like this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">OPERATORS_MAP</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;exact&#39;</span><span class="p">:</span> <span class="s">&#39;=&#39;</span><span class="p">,</span>
+    <span class="s">&#39;gt&#39;</span><span class="p">:</span> <span class="s">&#39;&gt;&#39;</span><span class="p">,</span>
+    <span class="s">&#39;gte&#39;</span><span class="p">:</span> <span class="s">&#39;&gt;=&#39;</span><span class="p">,</span>
+    <span class="c"># ...</span>
+    <span class="s">&#39;isnull&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">lookup_type</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;=&#39;</span> <span class="k">if</span> <span class="n">value</span> <span class="k">else</span> <span class="s">&#39;!=&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+<span class="p">}</span>
+
+<span class="n">NEGATION_MAP</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;exact&#39;</span><span class="p">:</span> <span class="s">&#39;!=&#39;</span><span class="p">,</span>
+    <span class="s">&#39;gt&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;=&#39;</span><span class="p">,</span>
+    <span class="c"># ...</span>
+    <span class="s">&#39;isnull&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">lookup_type</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;!=&#39;</span> <span class="k">if</span> <span class="n">value</span> <span class="k">else</span> <span class="s">&#39;=&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>In our example implementation the operator can be a string or a callable that returns the comparison operator and a modified value. Finally, in the last two lines of <tt class="docutils literal"><span class="pre">add_filter()</span></tt> we convert the value to its low-level DB type and then add a filter to the low-level query object.</p>
+<p>You might have noticed the <tt class="docutils literal"><span class="pre">&#64;save_call</span></tt> decorator. This is important. It catches database exceptions and converts them to Django&#8217;s <tt class="docutils literal"><span class="pre">DatabaseError</span></tt>. That decorator should be used for all your public API methods. Just modify the sample implementation in <tt class="docutils literal"><span class="pre">compiler.py</span></tt> to match your DB&#8217;s needs.</p>
+<p>Next, you have to define a <tt class="docutils literal"><span class="pre">fetch()</span></tt> function for retrieving the results from the configured query:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@safe_call</span>
+<span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">low_mark</span><span class="p">,</span> <span class="n">high_mark</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">high_mark</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="c"># Infinite fetching</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_query</span><span class="o">.</span><span class="n">fetch_infinite</span><span class="p">(</span><span class="n">offset</span><span class="o">=</span><span class="n">low_mark</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">high_mark</span> <span class="o">&gt;</span> <span class="n">low_mark</span><span class="p">:</span>
+        <span class="c"># Range fetching</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_query</span><span class="o">.</span><span class="n">fetch_range</span><span class="p">(</span><span class="n">high_mark</span> <span class="o">-</span> <span class="n">low_mark</span><span class="p">,</span> <span class="n">low_mark</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+        <span class="n">entity</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get_meta</span><span class="p">()</span><span class="o">.</span><span class="n">pk</span><span class="o">.</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">entity</span><span class="p">[</span><span class="s">&#39;_id&#39;</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">entity</span><span class="p">[</span><span class="s">&#39;_id&#39;</span><span class="p">]</span>
+        <span class="k">yield</span> <span class="n">entity</span>
+</pre></div>
+</div>
+<p>Here, <tt class="docutils literal"><span class="pre">low_mark</span></tt> and <tt class="docutils literal"><span class="pre">high_mark</span></tt> define the query range. If <tt class="docutils literal"><span class="pre">high_mark</span></tt> is not defined you should allow for iterating through the whole result set. At the end, we convert the internal primary key column, again, and return a dict representing the entity. If your DB also supports only fetching specific columns you should get the requested fields from <tt class="docutils literal"><span class="pre">self.fields</span></tt> (<tt class="docutils literal"><span class="pre">field.column</span></tt> contains the column name).</p>
+<p>All values in the resulting dict are automatically converted via <tt class="docutils literal"><span class="pre">SQLCompiler.convert_value_from_db()</span></tt>. You have to implement that function (the backend template contains a sample implementation). That function gets a <tt class="docutils literal"><span class="pre">db_type</span></tt> parameter which is the type string as defined in your field type mapping in <tt class="docutils literal"><span class="pre">DatabaseCreation.data_types</span></tt>.</p>
+<p>We won&#8217;t look at the whole API in this post. There are additional functions for ordering, counting, and deleting the query results. It&#8217;s pretty simple. The API might later get extended with support for aggregates, but currently you&#8217;ll have to handle them at a lower level in your <tt class="docutils literal"><span class="pre">SQLCompiler</span></tt> implementation if your DB supports those features.</p>
+<p>Another important function is called on <tt class="docutils literal"><span class="pre">Model.save()</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">SQLInsertCompiler</span><span class="p">(</span><span class="n">NonrelInsertCompiler</span><span class="p">,</span> <span class="n">SQLCompiler</span><span class="p">):</span>
+    <span class="nd">@safe_call</span>
+    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">return_id</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="n">pk_column</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get_meta</span><span class="p">()</span><span class="o">.</span><span class="n">pk</span><span class="o">.</span><span class="n">column</span>
+        <span class="k">if</span> <span class="n">pk_column</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="s">&#39;_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">pk_column</span><span class="p">]</span>
+            <span class="k">del</span> <span class="n">data</span><span class="p">[</span><span class="n">pk_column</span><span class="p">]</span>
+
+        <span class="n">pk</span> <span class="o">=</span> <span class="n">save_entity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">db_connection</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get_meta</span><span class="p">()</span><span class="o">.</span><span class="n">db_table</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pk</span>
+</pre></div>
+</div>
+<p>Again, <tt class="docutils literal"><span class="pre">data</span></tt> is a dict because that maps naturally to nonrel DBs. Note, before insert() is called, all values are automatically converted via <tt class="docutils literal"><span class="pre">SQLCompiler.convert_value_for_db()</span></tt> (which you have to implement, too), so you don&#8217;t have to deal with value conversions in that function.</p>
+<p>I hope this gives you enough information to get started with a new backend. Please spread the word, so we can find backend contributors for all non-relational DBs. Django 1.3 development is getting closer and in order to get officially integrated into Django we have to prove that it&#8217;s possible to use Django-nonrel with a wide variety of NoSQL DBs.</p>
+<p>Please comment on the API. Should we improve anything? Is it flexible and easy enough?</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Managing per-field indexes on App Engine.html"
+                        title="previous chapter">Managing per-field indexes on App Engine</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/content/Writing a non-relational Django backend.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="Managing per-field indexes on App Engine.html" title="Managing per-field indexes on App Engine"
+             >previous</a> |</li>
+        <li><a href="../index.html">Django-nonrel v0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Tom Brander.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

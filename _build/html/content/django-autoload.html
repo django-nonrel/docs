@@ -1,0 +1,178 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>django-autoload &mdash; Django-nonrel v0 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Django-nonrel v0 documentation" href="../index.html" />
+    <link rel="next" title="Django-dbindexer" href="django-dbindexer - Expressive NoSQL.html" />
+    <link rel="prev" title="djangoappengine - Django App Engine backends (DB, email, etc.)" href="djangoappengine - Django App Engine backends (DB, email, etc.).html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="django-dbindexer - Expressive NoSQL.html" title="Django-dbindexer"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="djangoappengine - Django App Engine backends (DB, email, etc.).html" title="djangoappengine - Django App Engine backends (DB, email, etc.)"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Django-nonrel v0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="django-autoload">
+<h1>django-autoload<a class="headerlink" href="#django-autoload" title="Permalink to this headline">¶</a></h1>
+<p>django-autoload is a reuseable django app which allows for correct initialization of your django project by ensuring the loading of signal handlers or indexes before any request is being processed.</p>
+<ul class="project-links">
+  <li><a href="https://bitbucket.org/twanschik/django-autoload/src">Source</a></li>
+  <li><a href="/blog/django">Blog</a></li>
+</ul><div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
+<li><dl class="first docutils">
+<dt>Add django-autoload/autoload to settings.INSTALLED_APPS</dt>
+<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s">&#39;autoload&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Add the <tt class="docutils literal"><span class="pre">autoload.middleware.AutoloadMiddleware</span></tt> before any other middelware</dt>
+<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="n">MIDDLEWARE_CLASSES</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;autoload.middleware.AutoloadMiddleware&#39;</span><span class="p">,</span> <span class="p">)</span> <span class="o">+</span> \
+                      <span class="n">MIDDLEWARE_CLASSES</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</li>
+</ol>
+</div>
+<div class="section" id="how-does-django-autoload-ensures-correct-initialization-of-my-project">
+<h2>How does django-autoload ensures correct initialization of my project?<a class="headerlink" href="#how-does-django-autoload-ensures-correct-initialization-of-my-project" title="Permalink to this headline">¶</a></h2>
+<p>django-autoload provides two mechanisms to allow for correct initializations:</p>
+<ol class="arabic simple">
+<li>The <tt class="docutils literal"><span class="pre">autoload.middleware.AutoloadMiddleware</span></tt> middleware will load all <tt class="docutils literal"><span class="pre">models.py</span></tt> from settings.INSTALLED_APPS as soon as the first request is being processed. This ensures the registration of signal handlers for example.</li>
+<li>django-autoload provides a site configuration module loading mechanism. Therefore, you have to create a site configuration module. The module name has to be specified in your settings:</li>
+</ol>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># settings.py:</span>
+<span class="n">AUTOLOAD_SITECONF</span> <span class="o">=</span> <span class="s">&#39;indexes&#39;</span>
+</pre></div>
+</div>
+<p>Now, django-autoload will load the module <tt class="docutils literal"><span class="pre">indexes.py</span></tt> before any request is being processed. An example module could look like this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># indexes.py:</span>
+<span class="kn">from</span> <span class="nn">dbindexer</span> <span class="kn">import</span> <span class="n">autodiscover</span>
+<span class="n">autodiscover</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This will ensure the registration of all database indexes specified in your project.</p>
+<div class="section" id="autoload-autodiscover-module-name">
+<h3>autoload.autodiscover(module_name)<a class="headerlink" href="#autoload-autodiscover-module-name" title="Permalink to this headline">¶</a></h3>
+<p>Some apps like <a class="reference external" href="http://www.allbuttonspressed.com/projects/django-dbindexer">django-dbindexer</a> or <a class="reference external" href="http://www.allbuttonspressed.com/projects/nonrel-search">nonrel-search</a> provide an autodiscover-mechanism which tries to import index definitions from all apps in settings.INSTALLED_APPS. Since the autodiscover-mechanism is so common django-autoload provides an <tt class="docutils literal"><span class="pre">autodiscover</span></tt> function for these apps.</p>
+<p><tt class="docutils literal"><span class="pre">autodiscover</span></tt> will search for <tt class="docutils literal"><span class="pre">[module_name].py</span></tt> in all <tt class="docutils literal"><span class="pre">settings.INSTALLED_APPS</span></tt> and load them. django-dbindexer&#8217;s autodiscover function just looks like this for example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">autodiscover</span><span class="p">():</span>
+    <span class="kn">from</span> <span class="nn">autoload</span> <span class="kn">import</span> <span class="n">autodiscover</span> <span class="k">as</span> <span class="n">auto_discover</span>
+    <span class="n">auto_discover</span><span class="p">(</span><span class="s">&#39;dbindexes&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">django-autoload</a><ul>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#how-does-django-autoload-ensures-correct-initialization-of-my-project">How does django-autoload ensures correct initialization of my project?</a><ul>
+<li><a class="reference internal" href="#autoload-autodiscover-module-name">autoload.autodiscover(module_name)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="djangoappengine - Django App Engine backends (DB, email, etc.).html"
+                        title="previous chapter">djangoappengine - Django App Engine backends (DB, email, etc.)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="django-dbindexer - Expressive NoSQL.html"
+                        title="next chapter">Django-dbindexer</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/content/django-autoload.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="django-dbindexer - Expressive NoSQL.html" title="Django-dbindexer"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="djangoappengine - Django App Engine backends (DB, email, etc.).html" title="djangoappengine - Django App Engine backends (DB, email, etc.)"
+             >previous</a> |</li>
+        <li><a href="../index.html">Django-nonrel v0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Tom Brander.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,155 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Managing per-field indexes on App Engine &mdash; Django-nonrel v0 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Django-nonrel v0 documentation" href="../index.html" />
+    <link rel="next" title="Writing a non-relational Django backend" href="Writing a non-relational Django backend.html" />
+    <link rel="prev" title="HTML5 offline manifests with django-mediagenerator" href="HTML5 offline manifests with django-mediagenerator.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="Writing a non-relational Django backend.html" title="Writing a non-relational Django backend"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="HTML5 offline manifests with django-mediagenerator.html" title="HTML5 offline manifests with django-mediagenerator"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Django-nonrel v0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="managing-per-field-indexes-on-app-engine">
+<h1>Managing per-field indexes on App Engine<a class="headerlink" href="#managing-per-field-indexes-on-app-engine" title="Permalink to this headline">¶</a></h1>
+<p>An annoying problem when trying to reuse an existing Django app is that some apps use <tt class="docutils literal"><span class="pre">TextField</span></tt> instead of <tt class="docutils literal"><span class="pre">CharField</span></tt> and still want to filter on that field. On App Engine <tt class="docutils literal"><span class="pre">TextField</span></tt> is not indexed and thus can&#8217;t be filtered against. One app which has this problem is <a class="reference external" href="https://launchpad.net/django-openid-auth">django-openid-auth</a>. Previously, you had to modify the model source code directly and replace <tt class="docutils literal"><span class="pre">TextField</span></tt> with <tt class="docutils literal"><span class="pre">CharField</span></tt> where necessary. However, this is not a good solution because whenever you update the code you have to apply the patch, again. Now, <a class="reference external" href="/projects/djangoappengine">djangoappengine</a> provides a solution which allows you to configure indexes for individual fields without changing the models. By decoupling DB-specific indexes from the model definition we simplify maintenance and increase code portability.</p>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p>Let&#8217;s see how we can get django-openid-auth to work correctly without modifying the app&#8217;s source code. First, you need to create a module which defines the indexing settings. Let&#8217;s call it &#8220;gae_openid_settings.py&#8221;:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">django_openid_auth.models</span> <span class="kn">import</span> <span class="n">Association</span><span class="p">,</span> <span class="n">UserOpenID</span>
+
+<span class="n">FIELD_INDEXES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">Association</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;indexed&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;server_url&#39;</span><span class="p">,</span> <span class="s">&#39;assoc_type&#39;</span><span class="p">]},</span>
+    <span class="n">UserOpenID</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;indexed&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;claimed_id&#39;</span><span class="p">]},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Then, in your settings.py you have to specify the list of gae settings modules:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">GAE_SETTINGS_MODULES</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s">&#39;gae_openid_settings&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>That&#8217;s it. Now the <tt class="docutils literal"><span class="pre">server_url</span></tt>, <tt class="docutils literal"><span class="pre">assoc_type</span></tt>, and <tt class="docutils literal"><span class="pre">claimed_id</span></tt> <tt class="docutils literal"><span class="pre">TextField</span></tt>s will behave like <tt class="docutils literal"><span class="pre">CharField</span></tt> and get indexed by the datastore.</p>
+<p>Note that we didn&#8217;t place the index definition in the <tt class="docutils literal"><span class="pre">django_openid_auth</span></tt> package. It&#8217;s better to keep them separate because that way upgrades are easier: Just update the <tt class="docutils literal"><span class="pre">django_openid_auth</span></tt> folder. No need to re-add the index definition (and you can&#8217;t mistakenly delete the index definition during updates).</p>
+</div>
+<div class="section" id="optimization">
+<h2>Optimization<a class="headerlink" href="#optimization" title="Permalink to this headline">¶</a></h2>
+<p>You can also use this to optimize your models. For example, you might have fields which don&#8217;t need to be indexed. The more indexes you have the slower <tt class="docutils literal"><span class="pre">Model.save()</span></tt> will be. Fields that shouldn&#8217;t be indexed can be specified via <tt class="docutils literal"><span class="pre">'unindexed'</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">myapp.models</span> <span class="kn">import</span> <span class="n">MyContact</span>
+
+<span class="n">FIELD_INDEXES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">MyContact</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&#39;indexed&#39;</span><span class="p">:</span> <span class="p">[</span><span class="o">...</span><span class="p">],</span>
+        <span class="s">&#39;unindexed&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;creation_date&#39;</span><span class="p">,</span> <span class="s">&#39;last_modified&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This also has a nice extra advantage: If you specify a <tt class="docutils literal"><span class="pre">CharField</span></tt> as &#8220;unindexed&#8221; it will behave like a <tt class="docutils literal"><span class="pre">TextField</span></tt> and allow for storing strings that are longer than 500 bytes. This can also be useful when trying to integrate 3rd-party apps.</p>
+<p>We hope you&#8217;ll find this feature helpful. Feel free to post sample settings for other reusable Django apps in the comments. See you next time with some very exciting releases!</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Managing per-field indexes on App Engine</a><ul>
+<li><a class="reference internal" href="#example">Example</a></li>
+<li><a class="reference internal" href="#optimization">Optimization</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="HTML5 offline manifests with django-mediagenerator.html"
+                        title="previous chapter">HTML5 offline manifests with django-mediagenerator</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Writing a non-relational Django backend.html"
+                        title="next chapter">Writing a non-relational Django backend</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/content/Managing per-field indexes on App Engine.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="Writing a non-relational Django backend.html" title="Writing a non-relational Django backend"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="HTML5 offline manifests with django-mediagenerator.html" title="HTML5 offline manifests with django-mediagenerator"
+             >previous</a> |</li>
+        <li><a href="../index.html">Django-nonrel v0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Tom Brander.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

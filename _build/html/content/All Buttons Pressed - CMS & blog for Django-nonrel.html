@@ -1,0 +1,139 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>All Buttons Pressed Blog Sample Project &mdash; Django-nonrel v0 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Django-nonrel v0 documentation" href="../index.html" />
+    <link rel="next" title="djangoappengine - Django App Engine backends (DB, email, etc.)" href="djangoappengine - Django App Engine backends (DB, email, etc.).html" />
+    <link rel="prev" title="Welcome to Django-nonrel" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="djangoappengine - Django App Engine backends (DB, email, etc.).html" title="djangoappengine - Django App Engine backends (DB, email, etc.)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Welcome to Django-nonrel"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Django-nonrel v0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+<div class="section" id="all-buttons-pressed-blog-sample-project">
+<h1>All Buttons Pressed Blog Sample Project<a class="headerlink" href="#all-buttons-pressed-blog-sample-project" title="Permalink to this headline">¶</a></h1>
+<p>This is the the website you&#8217;re currently looking at. All Buttons Pressed provides a simple &#8220;CMS&#8221; with support for multiple independent blogs. It&#8217;s compatible with <a class="reference external" href="/projects/django-nonrel">Django-nonrel</a> and the normal SQL-based Django, so you can use it with App Engine, MongoDB, MySQL, PostgreSQL, sqlite, and all other backends that work with either Django or Django-nonrel. Actually the project was started to demonstrate what&#8217;s possible with Django-nonrel and to give you an impression of how to write code for non-relational databases.</p>
+<ul class="project-links">
+   <li><a href="#documentation">Documentation</a></li>
+   <li><a href="http://bitbucket.org/wkornewald/allbuttonspressed/src">Source</a></li>
+   <li><a href="http://bitbucket.org/wkornewald/allbuttonspressed/downloads/allbuttonspressed.zip">Download</a></li>
+</ul><div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+<p>Note: Some parts of the code are explained in the <a class="reference external" href="/blog/django/2010/02/4-things-to-know-for-NoSQL-Django-coders">4 things to know for NoSQL Django coders</a> blog post.</p>
+<p>Before you start you&#8217;ll need to install <a class="reference external" href="http://sass-lang.com/">Sass</a> and <a class="reference external" href="http://compass-style.org/">Compass</a>. Then you can just <a class="reference external" href="http://bitbucket.org/wkornewald/allbuttonspressed/downloads/allbuttonspressed.zip">download</a> the zip file. Make sure that your App Engine SDK is at least version 1.5.0 prerelease.</p>
+<p>Alternatively, if you want to clone the latest code you&#8217;ll have to also install <a class="reference external" href="/projects/django-mediagenerator">django-mediagenerator</a>. By default, the settings file is configured to use App Engine, so you&#8217;ll also need <a class="reference external" href="/projects/djangoappengine">djangoappengine</a> and all of its dependencies (<a class="reference external" href="/projects/django-nonrel">Django-nonrel</a>, <a class="reference external" href="/projects/djangotoolbox">djangotoolbox</a>, <a class="reference external" href="/projects/django-dbindexer">django-dbindexer</a>, and <a class="reference external" href="/projects/django-autoload">django-autoload</a>). In contrast, on SQL databases you won&#8217;t need any of those dependencies except for <a class="reference external" href="/projects/django-mediagenerator">django-mediagenerator</a>.</p>
+<p>First, create an admin user with <tt class="docutils literal"><span class="pre">manage.py</span> <span class="pre">createsupeuser</span></tt>. Then, run <tt class="docutils literal"><span class="pre">manage.py</span> <span class="pre">runserver</span></tt> and go to <a class="reference external" href="http://localhost:8000/admin/">http://localhost:8000/admin/</a> and create a few pages and posts. Otherwise you&#8217;ll only see a 404 error page.</p>
+<p>All Buttons Pressed has a concept called &#8220;Block&#8221;. Blocks can be created and edited via the admin UI. The sidebar&#8217;s content is defined via a block called &#8220;sidebar&#8221;.</p>
+<p>The menu is defined via a &#8220;menu&#8221; block where each menu item is in the format <tt class="docutils literal"><span class="pre">&lt;label&gt;</span> <span class="pre">&lt;url&gt;</span></tt>:</p>
+<div class="highlight-text"><div class="highlight"><pre>Some label     /url
+Other label    http://www.other.url/
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">All Buttons Pressed Blog Sample Project</a><ul>
+<li><a class="reference internal" href="#documentation">Documentation</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../index.html"
+                        title="previous chapter">Welcome to Django-nonrel</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="djangoappengine - Django App Engine backends (DB, email, etc.).html"
+                        title="next chapter">djangoappengine - Django App Engine backends (DB, email, etc.)</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/content/All Buttons Pressed - CMS &amp; blog for Django-nonrel.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="djangoappengine - Django App Engine backends (DB, email, etc.).html" title="djangoappengine - Django App Engine backends (DB, email, etc.)"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Welcome to Django-nonrel"
+             >previous</a> |</li>
+        <li><a href="../index.html">Django-nonrel v0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Tom Brander.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

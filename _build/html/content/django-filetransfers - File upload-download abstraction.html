@@ -1,0 +1,349 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>django-filetransfers &mdash; Django-nonrel v0 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Django-nonrel v0 documentation" href="../index.html" />
+    <link rel="next" title="django-mediagenerator" href="django-mediagenerator asset manager.html" />
+    <link rel="prev" title="Django-dbindexer" href="django-dbindexer - Expressive NoSQL.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="django-mediagenerator asset manager.html" title="django-mediagenerator"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="django-dbindexer - Expressive NoSQL.html" title="Django-dbindexer"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Django-nonrel v0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="django-filetransfers">
+<h1>django-filetransfers<a class="headerlink" href="#django-filetransfers" title="Permalink to this headline">¶</a></h1>
+<p>With django-filetransfers you can write reusable Django apps that handle uploads and downloads in an abstract way. Django&#8217;s own file upload and storage API alone is too limited because (1) it doesn&#8217;t provide a mechanism for file downloads and (2) it can only handle direct uploads which eat a lot of resources and aren&#8217;t compatible with cloud services like the App Engine Blobstore or asynchronous Amazon S3 uploads (where the file isn&#8217;t piped through Django, but sent directly to S3). This is where django-filetransfers comes in. You can continue to use Django&#8217;s <tt class="docutils literal"><span class="pre">FileField</span></tt> and <tt class="docutils literal"><span class="pre">ModelForm</span></tt> in your apps. You just need to add a few very simple API calls to your file handling views and templates and select a django-filetransfers backend via your settings.py. With this you can transparently support cloud services for file hosting or even the X-Sendfile mechanism.</p>
+<ul class="project-links">
+  <li><a href="#documentation">Documentation</a></li>
+  <li><a href="http://bitbucket.org/wkornewald/django-filetransfers/src">Source</a></li>
+  <li><a href="http://bitbucket.org/wkornewald/django-filetransfers/get/tip.zip">Download</a></li>
+  <li><a href="http://bitbucket.org/wkornewald/upload-sample">Sample code</a></li>
+  <li><a href="http://django-filetransfers.appspot.com/">Demo</a></li>
+</ul><div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>You can install the package via <tt class="docutils literal"><span class="pre">setup.py</span> <span class="pre">install</span></tt> or by copying or linking the &#8220;filetransfers&#8221; folder to your project (App Engine developers have to use the copy/link method). Then, add &#8220;filetransfers&#8221; to your <tt class="docutils literal"><span class="pre">INSTALLED_APPS</span></tt>.</p>
+<p>Note for App Engine users: All nrequired backends are already enabled in the default settings. You don&#8217;t need any special configuration. In order to use the Blobstore on the App Engine production server you have to enable billing. Otherwise, the Blobstore API is disabled.</p>
+</div>
+<div class="section" id="model-and-form">
+<h2>Model and form<a class="headerlink" href="#model-and-form" title="Permalink to this headline">¶</a></h2>
+<p>In the following we&#8217;ll use this model and form:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">UploadModel</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="nb">file</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">FileField</span><span class="p">(</span><span class="n">upload_to</span><span class="o">=</span><span class="s">&#39;uploads/%Y/%m/</span><span class="si">%d</span><span class="s">/%H/%M/%S/&#39;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">UploadForm</span><span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">ModelForm</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">UploadModel</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">upload_to</span></tt> parameter for <tt class="docutils literal"><span class="pre">FileField</span></tt> defines the target folder for file uploads (here, we add the date).</p>
+<p><strong>Note for App Engine users:</strong> When accessing a file object from <tt class="docutils literal"><span class="pre">UploadedModel</span></tt> you can get the file&#8217;s <tt class="docutils literal"><span class="pre">BlobInfo</span></tt> object via <tt class="docutils literal"><span class="pre">uploadedmodel.file.blobstore_info</span></tt>. Use this to e.g. convert uploaded images via the Image API.</p>
+</div>
+<div class="section" id="handling-uploads">
+<h2>Handling uploads<a class="headerlink" href="#handling-uploads" title="Permalink to this headline">¶</a></h2>
+<p>File uploads are handled with the <tt class="docutils literal"><span class="pre">prepare_upload()</span></tt> function which takes the request and the URL of the upload view and returns a tuple with a generated upload URL and extra POST data for the upload. The extra POST data is just a <tt class="docutils literal"><span class="pre">dict</span></tt>, so you can pass it to your JavaScript code if needed. This is an example upload view:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">filetransfers.api</span> <span class="kn">import</span> <span class="n">prepare_upload</span>
+
+<span class="k">def</span> <span class="nf">upload_handler</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="n">view_url</span> <span class="o">=</span> <span class="n">reverse</span><span class="p">(</span><span class="s">&#39;upload.views.upload_handler&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">UploadForm</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">FILES</span><span class="p">)</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">HttpResponseRedirect</span><span class="p">(</span><span class="n">view_url</span><span class="p">)</span>
+
+    <span class="n">upload_url</span><span class="p">,</span> <span class="n">upload_data</span> <span class="o">=</span> <span class="n">prepare_upload</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">view_url</span><span class="p">)</span>
+    <span class="n">form</span> <span class="o">=</span> <span class="n">UploadForm</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">direct_to_template</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s">&#39;upload/upload.html&#39;</span><span class="p">,</span>
+        <span class="p">{</span><span class="s">&#39;form&#39;</span><span class="p">:</span> <span class="n">form</span><span class="p">,</span> <span class="s">&#39;upload_url&#39;</span><span class="p">:</span> <span class="n">upload_url</span><span class="p">,</span> <span class="s">&#39;upload_data&#39;</span><span class="p">:</span> <span class="n">upload_data</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>Note that it&#8217;s important that you send a redirect after an upload. Otherwise, some file hosting services won&#8217;t work correctly.</p>
+<p>Now, you have to use the generated upload URL and the upload&#8217;s extra POST data in the template:</p>
+<div class="highlight-html"><div class="highlight"><pre>{% load filetransfers %}
+<span class="nt">&lt;form</span> <span class="na">action=</span><span class="s">&quot;{{ upload_url }}&quot;</span> <span class="na">method=</span><span class="s">&quot;POST&quot;</span> <span class="na">enctype=</span><span class="s">&quot;multipart/form-data&quot;</span><span class="nt">&gt;</span>
+  {% csrf_token %}
+  {% render_upload_data upload_data %}
+  <span class="nt">&lt;table&gt;</span>{{ form }}<span class="nt">&lt;/table&gt;</span>
+  <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;submit&quot;</span> <span class="na">value=</span><span class="s">&quot;Upload&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/form&gt;</span>
+</pre></div>
+</div>
+<p>Here we use the <tt class="docutils literal"><span class="pre">{%</span> <span class="pre">render_upload_data</span> <span class="pre">%}</span></tt> tag which generates <tt class="docutils literal"><span class="pre">&lt;input</span> <span class="pre">type=&quot;hidden&quot;</span> <span class="pre">/&gt;</span></tt> fields for the extra POST data.</p>
+</div>
+<div class="section" id="security-and-permissions">
+<h2>Security and permissions<a class="headerlink" href="#security-and-permissions" title="Permalink to this headline">¶</a></h2>
+<p>By default, uploads are assumed to have a publicly accessible URL if that&#8217;s supported by the backend. You can tell the backend to mark the upload as private via <tt class="docutils literal"><span class="pre">prepare_upload(...,</span> <span class="pre">private=True)</span></tt>. If the backend has no control over the permissions (e.g., because it&#8217;s your task to configure the web server correctly and not make private files publicly accessible) the <tt class="docutils literal"><span class="pre">private=True</span></tt> argument might just be ignored.</p>
+<p>Asynchronous backends (like async S3 or even Blobstore) have to take special care of preventing faked uploads. After a successful upload to the actual server these backends have to generate a separate request which contains the POST data and a file ID identifying the uploaded file (the Blobstore automatically sends the blob key and async S3 would send the file and bucket name). The problem here is that a user can manually generate a request which matches the ID of some other user&#8217;s private file, thus getting access to that file because it&#8217;s now fake-uploaded to his private files, too. In order to prevent this asynchronous backends have to guarantee that no file ID is used twice for an upload.</p>
+</div>
+<div class="section" id="handling-downloads">
+<h2>Handling downloads<a class="headerlink" href="#handling-downloads" title="Permalink to this headline">¶</a></h2>
+<p>Since the actual download permissions can be out of the backend&#8217;s control the download solution consists of two layers.</p>
+<p>The <tt class="docutils literal"><span class="pre">serve_file()</span></tt> function primarily takes care of private file downloads, but in some configurations it might also have to take care of public downloads because the file hosting solution doesn&#8217;t provide publicly accessible URLs (e.g., App Engine Blobstore). This means that you should also use that function as a fallback even if you only have public downloads. The function takes two required arguments: the request and the Django <tt class="docutils literal"><span class="pre">File</span></tt> object that should be served (e.g. from <tt class="docutils literal"><span class="pre">FileField</span></tt>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">filetransfers.api</span> <span class="kn">import</span> <span class="n">serve_file</span>
+
+<span class="k">def</span> <span class="nf">download_handler</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">pk</span><span class="p">):</span>
+    <span class="n">upload</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">UploadModel</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">serve_file</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">upload</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">public_download_url</span></tt> function, which is also available as a template filter, returns a file&#8217;s publicly accessible URL if that&#8217;s supported by the backend. Otherwise it returns <tt class="xref docutils literal"><span class="pre">None</span></tt>.</p>
+<p><strong>Important</strong>: Use <tt class="docutils literal"><span class="pre">public_download_url</span></tt> only for files that should be publicly accessible. Otherwise you should only use <tt class="docutils literal"><span class="pre">serve_file()</span></tt>, so you can check permissions before approving the download.</p>
+<p>A complete solution for public downloads which falls back to <tt class="docutils literal"><span class="pre">serve_file()</span></tt> would look like this in a template for an instance of <tt class="docutils literal"><span class="pre">UploadModel</span></tt> called <tt class="docutils literal"><span class="pre">upload</span></tt>:</p>
+<div class="highlight-html"><div class="highlight"><pre>{% load filetransfers %}
+{% url upload.views.download_handler pk=upload.pk as fallback_url %}
+<span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;{% firstof upload.file|public_download_url fallback_url %}&quot;</span><span class="nt">&gt;</span>Download<span class="nt">&lt;/a&gt;</span>
+</pre></div>
+</div>
+<p>The second line stores the <tt class="docutils literal"><span class="pre">serve_file()</span></tt> fallback URL in a variable. In the third line we then use the <tt class="docutils literal"><span class="pre">public_download_url</span></tt> template filter in order to get the file&#8217;s publicly accessible URL. If that returns <tt class="xref docutils literal"><span class="pre">None</span></tt> the <tt class="docutils literal"><span class="pre">{%</span> <span class="pre">firstof</span> <span class="pre">%}</span></tt> template tag returns the second argument which is our fallback URL. Otherwise the public download URL is used.</p>
+</div>
+<div class="section" id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
+<p>There are three backend types which are supported by django-filetransfers: one for uploads, one for downloads via <tt class="docutils literal"><span class="pre">serve_file()</span></tt>, and one for public downloads. You can specify the backends in your settings.py:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">PREPARE_UPLOAD_BACKEND</span> <span class="o">=</span> <span class="s">&#39;filetransfers.backends.default.prepare_upload&#39;</span>
+<span class="n">SERVE_FILE_BACKEND</span> <span class="o">=</span> <span class="s">&#39;filetransfers.backends.default.serve_file&#39;</span>
+<span class="n">PUBLIC_DOWNLOAD_URL_BACKEND</span> <span class="o">=</span> <span class="s">&#39;filetransfers.backends.default.public_download_url&#39;</span>
+</pre></div>
+</div>
+<p>The default upload backend simply returns the URL unmodified. The default download backend transfers the file in chunks via Django, so it&#8217;s definitely not the most efficient mechanism, but it uses only a small amount of memory (important for large files) and requires less resources than passing a file object directly to the response. The default public downloads backend simply returns <tt class="xref docutils literal"><span class="pre">None</span></tt>. This default configuration should work with practically all servers, but it&#8217;s not the most efficient solution. Please take a look at the backends which are shipped with django-filetransfers to see if something fits your solution better.</p>
+</div>
+<div class="section" id="private-download-backends">
+<h2>Private download backends<a class="headerlink" href="#private-download-backends" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="xsendfile-serve-file">
+<h3>xsendfile.serve_file<a class="headerlink" href="#xsendfile-serve-file" title="Permalink to this headline">¶</a></h3>
+<p>Many web servers (at least Apache, Lighttpd, and nginx) provide an &#8220;X-Sendfile&#8221; module which allows for handing off the actual file transfer to the web server. This is much more efficient than the default download backend, so you should install the required module for your web server and then configure the xsendfile download backend in your settings.py:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">SERVE_FILE_BACKEND</span> <span class="o">=</span> <span class="s">&#39;filetransfers.backends.xsendfile.serve_file&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="url-serve-file">
+<h3>url.serve_file<a class="headerlink" href="#url-serve-file" title="Permalink to this headline">¶</a></h3>
+<p>We also provide a backend which simply redirects to <tt class="docutils literal"><span class="pre">file.url</span></tt>. You have to make sure that <tt class="docutils literal"><span class="pre">file.url</span></tt> actually generates a private download URL, though. This backend should work with the Amazon S3 and similar storage backends from the <a class="reference external" href="http://bitbucket.org/david/django-storages">django-storages</a> project. Just add the following to your settings.py:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">SERVE_FILE_BACKEND</span> <span class="o">=</span> <span class="s">&#39;filetransfers.backends.url.serve_file&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="public-download-backends">
+<h2>Public download backends<a class="headerlink" href="#public-download-backends" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="url-public-download-url">
+<h3>url.public_download_url<a class="headerlink" href="#url-public-download-url" title="Permalink to this headline">¶</a></h3>
+<p>If <tt class="docutils literal"><span class="pre">file.url</span></tt> points to a public download URL you can use this backend:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">PUBLIC_DOWNLOAD_URL_BACKEND</span> <span class="o">=</span> <span class="s">&#39;filetransfers.backends.url.public_download_url&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="base-url-public-download-url">
+<h3>base_url.public_download_url<a class="headerlink" href="#base-url-public-download-url" title="Permalink to this headline">¶</a></h3>
+<p>Alternatively, there&#8217;s also a simple backend that merely points to a different URL. You just need to specify a base URL and the backend appends <tt class="docutils literal"><span class="pre">file.name</span></tt> to that base URL.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">PUBLIC_DOWNLOAD_URL_BACKEND</span> <span class="o">=</span> <span class="s">&#39;filetransfers.backends.base_url.public_download_url&#39;</span>
+<span class="n">PUBLIC_DOWNLOADS_URL_BASE</span> <span class="o">=</span> <span class="s">&#39;/downloads/&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="upload-backends">
+<h2>Upload backends<a class="headerlink" href="#upload-backends" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="delegate-prepare-upload">
+<h3>delegate.prepare_upload<a class="headerlink" href="#delegate-prepare-upload" title="Permalink to this headline">¶</a></h3>
+<p>This backend delegates the upload to some other backend based on <tt class="docutils literal"><span class="pre">private=True</span></tt> or <tt class="docutils literal"><span class="pre">private=False</span></tt>. This way you can, for instance, use the App Engine Blobstore for private files and Amazon S3 for public files:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Configure &quot;delegate&quot; backend</span>
+<span class="n">PREPARE_UPLOAD_BACKEND</span> <span class="o">=</span> <span class="s">&#39;filetransfers.backends.delegate.prepare_upload&#39;</span>
+<span class="n">PRIVATE_PREPARE_UPLOAD_BACKEND</span> <span class="o">=</span> <span class="s">&#39;djangoappengine.storage.prepare_upload&#39;</span>
+<span class="n">PUBLIC_PREPARE_UPLOAD_BACKEND</span> <span class="o">=</span> <span class="s">&#39;s3backend.prepare_upload&#39;</span>
+
+<span class="c"># Use S3 for public_download_url and Blobstore for serve_file</span>
+<span class="n">SERVE_FILE_BACKEND</span> <span class="o">=</span> <span class="s">&#39;djangoappengine.storage.serve_file&#39;</span>
+<span class="n">PUBLIC_DOWNLOAD_URL_BACKEND</span> <span class="o">=</span> <span class="s">&#39;filetransfers.backends.base_url.public_download_url&#39;</span>
+<span class="n">PUBLIC_DOWNLOADS_URL_BASE</span> <span class="o">=</span> <span class="s">&#39;http://s3.amazonaws.com/my-public-bucket/&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="reference-filetransfers-api-module">
+<h2>Reference: <tt class="docutils literal"><span class="pre">filetransfers.api</span></tt> module<a class="headerlink" href="#reference-filetransfers-api-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="prepare-upload-request-url-private-false-backend-none">
+<h3>prepare_upload(request, url, private=False, backend=None)<a class="headerlink" href="#prepare-upload-request-url-private-false-backend-none" title="Permalink to this headline">¶</a></h3>
+<p>Returns a tuple with a target URL for the upload form and a <tt class="docutils literal"><span class="pre">dict</span></tt> with additional POST data for the upload request.</p>
+<p>Required arguments:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">request</span></tt>: The view&#8217;s request.</li>
+<li><tt class="docutils literal"><span class="pre">url</span></tt>: The target URL where the files should be sent to.</li>
+</ul>
+<p>Optional arguments:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">private</span></tt>: If <tt class="xref docutils literal"><span class="pre">False</span></tt> the backend will try to make the upload publicly accessible, so it can be served via the <tt class="docutils literal"><span class="pre">public_download_url</span></tt> template filter. If <tt class="xref docutils literal"><span class="pre">True</span></tt> the backend will try to make the upload non-accessible to the public, so it can only be served via <tt class="docutils literal"><span class="pre">serve_file()</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">backend</span></tt>: If defined, you can override the backend specified in settings.py.</li>
+</ul>
+</div>
+<div class="section" id="serve-file-request-file-backend-none-save-as-false-content-type-none">
+<h3>serve_file(request, file, backend=None, save_as=False, content_type=None)<a class="headerlink" href="#serve-file-request-file-backend-none-save-as-false-content-type-none" title="Permalink to this headline">¶</a></h3>
+<p>Serves a file to the browser. This is used either for checking permissions before approving a downoad or as a fallback if the backend doesn&#8217;t support publicly accessible URLs. So, you always have to provide a view that uses this function.</p>
+<p>Required arguments:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">request</span></tt>: The view&#8217;s request.</li>
+<li><tt class="docutils literal"><span class="pre">file</span></tt>: The <tt class="docutils literal"><span class="pre">File</span></tt> object (e.g. from <tt class="docutils literal"><span class="pre">FileField</span></tt>) that should be served.</li>
+</ul>
+<p>Optional arguments:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">save_as</span></tt>: Forces the browser to save the file instead of displaying it (useful for PDF documents, for example). If this is True the file object&#8217;s <tt class="docutils literal"><span class="pre">name</span></tt> attribute will be used as the file name in the download dialog. Alternatively, you can pass a string to override the file name. The default is to let the browser decide how to handle the download.</li>
+<li><tt class="docutils literal"><span class="pre">content_type</span></tt>: Overrides the file&#8217;s content type in the response. By default the content type will be detected via <tt class="docutils literal"><span class="pre">mimetypes.guess_type()</span></tt> using <tt class="docutils literal"><span class="pre">file.name</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">backend</span></tt>: If defined, you can override the backend specified in settings.py.</li>
+</ul>
+</div>
+<div class="section" id="public-download-url-file-backend-none">
+<h3>public_download_url(file, backend=None)<a class="headerlink" href="#public-download-url-file-backend-none" title="Permalink to this headline">¶</a></h3>
+<p>Tries to generate a publicly accessible URL for the given file. Returns <tt class="xref docutils literal"><span class="pre">None</span></tt> if no URL could be generated. The same function is available as a template filter.</p>
+<p>Required arguments:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">file</span></tt>: The <tt class="docutils literal"><span class="pre">File</span></tt> object (e.g. from <tt class="docutils literal"><span class="pre">FileField</span></tt>) that should be served.</li>
+</ul>
+<p>Optional arguments:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">backend</span></tt>: If defined, you can override the backend specified in settings.py.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="reference-filetransfers-template-library">
+<h2>Reference: <tt class="docutils literal"><span class="pre">filetransfers</span></tt> template library<a class="headerlink" href="#reference-filetransfers-template-library" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="render-upload-data-upload-data">
+<h3>{% render_upload_data upload_data %}<a class="headerlink" href="#render-upload-data-upload-data" title="Permalink to this headline">¶</a></h3>
+<p>Renders <tt class="docutils literal"><span class="pre">&lt;input</span> <span class="pre">type=&quot;hidden&quot;</span> <span class="pre">...</span> <span class="pre">/&gt;</span></tt> fields for the extra POST data (<tt class="docutils literal"><span class="pre">upload_data</span></tt>) as returned by <tt class="docutils literal"><span class="pre">prepare_upload()</span></tt>.</p>
+</div>
+<div class="section" id="public-download-url">
+<h3>public_download_url<a class="headerlink" href="#public-download-url" title="Permalink to this headline">¶</a></h3>
+<p>This template filter does the same as the <tt class="docutils literal"><span class="pre">public_upload_url()</span></tt> function in the <tt class="docutils literal"><span class="pre">filetransfers.api</span></tt> module: It returns a publicly accessible URL for the given file or <tt class="xref docutils literal"><span class="pre">None</span></tt> if it no such URL exists.</p>
+<p>It takes the <tt class="docutils literal"><span class="pre">File</span></tt> object (e.g. from <tt class="docutils literal"><span class="pre">FileField</span></tt>) that should be served and optionally a second parameter to override the backend specified in settings.py.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">django-filetransfers</a><ul>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#model-and-form">Model and form</a></li>
+<li><a class="reference internal" href="#handling-uploads">Handling uploads</a></li>
+<li><a class="reference internal" href="#security-and-permissions">Security and permissions</a></li>
+<li><a class="reference internal" href="#handling-downloads">Handling downloads</a></li>
+<li><a class="reference internal" href="#configuration">Configuration</a></li>
+<li><a class="reference internal" href="#private-download-backends">Private download backends</a><ul>
+<li><a class="reference internal" href="#xsendfile-serve-file">xsendfile.serve_file</a></li>
+<li><a class="reference internal" href="#url-serve-file">url.serve_file</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#public-download-backends">Public download backends</a><ul>
+<li><a class="reference internal" href="#url-public-download-url">url.public_download_url</a></li>
+<li><a class="reference internal" href="#base-url-public-download-url">base_url.public_download_url</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#upload-backends">Upload backends</a><ul>
+<li><a class="reference internal" href="#delegate-prepare-upload">delegate.prepare_upload</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#reference-filetransfers-api-module">Reference: <tt class="docutils literal"><span class="pre">filetransfers.api</span></tt> module</a><ul>
+<li><a class="reference internal" href="#prepare-upload-request-url-private-false-backend-none">prepare_upload(request, url, private=False, backend=None)</a></li>
+<li><a class="reference internal" href="#serve-file-request-file-backend-none-save-as-false-content-type-none">serve_file(request, file, backend=None, save_as=False, content_type=None)</a></li>
+<li><a class="reference internal" href="#public-download-url-file-backend-none">public_download_url(file, backend=None)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#reference-filetransfers-template-library">Reference: <tt class="docutils literal"><span class="pre">filetransfers</span></tt> template library</a><ul>
+<li><a class="reference internal" href="#render-upload-data-upload-data">{% render_upload_data upload_data %}</a></li>
+<li><a class="reference internal" href="#public-download-url">public_download_url</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="django-dbindexer - Expressive NoSQL.html"
+                        title="previous chapter">Django-dbindexer</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="django-mediagenerator asset manager.html"
+                        title="next chapter">django-mediagenerator</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/content/django-filetransfers - File upload-download abstraction.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="django-mediagenerator asset manager.html" title="django-mediagenerator"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="django-dbindexer - Expressive NoSQL.html" title="Django-dbindexer"
+             >previous</a> |</li>
+        <li><a href="../index.html">Django-nonrel v0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Tom Brander.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

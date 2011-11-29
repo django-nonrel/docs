@@ -1,0 +1,346 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>djangoappengine - Django App Engine backends (DB, email, etc.) &mdash; Django-nonrel v0 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Django-nonrel v0 documentation" href="../index.html" />
+    <link rel="next" title="django-autoload" href="django-autoload.html" />
+    <link rel="prev" title="All Buttons Pressed Blog Sample Project" href="All Buttons Pressed - CMS &amp; blog for Django-nonrel.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="django-autoload.html" title="django-autoload"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="All Buttons Pressed - CMS & blog for Django-nonrel.html" title="All Buttons Pressed Blog Sample Project"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Django-nonrel v0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="djangoappengine-django-app-engine-backends-db-email-etc">
+<h1>djangoappengine - Django App Engine backends (DB, email, etc.)<a class="headerlink" href="#djangoappengine-django-app-engine-backends-db-email-etc" title="Permalink to this headline">¶</a></h1>
+<p>Djangoappengine contains all App Engine backends for Django-nonrel, e.g. the database and email backends. In addition we provide a <a class="reference external" href="http://bitbucket.org/wkornewald/django-testapp">testapp</a> which contains minimal settings for running Django-nonrel on App Engine. Use it as a starting point if you want to use App Engine as your database for Django-nonrel. We&#8217;ve also published some details in the <a class="reference external" href="/blog/django/2010/01/Native-Django-on-App-Engine">Django on App Engine</a> blog post.</p>
+<p>Take a look at the documentation below and <a class="reference external" href="http://feeds.feedburner.com/AllButtonsPressed">subscribe</a> to our <a class="reference external" href="/blog/django">Django-nonrel blog</a> for the latest updates.</p>
+<ul class="project-links">
+   <li><a href="#documentation">Documentation</a></li>
+   <li><a href="http://bitbucket.org/wkornewald/djangoappengine/src">Source</a></li>
+   <li><a href="http://bitbucket.org/wkornewald/djangoappengine/get/tip.zip">Download</a></li>
+   <li><a href="http://groups.google.com/group/django-non-relational">Discussion group</a></li>
+   <li><a href="/">Blog</a></li>
+</ul><div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>Make sure you&#8217;ve installed the <a class="reference external" href="http://code.google.com/appengine/downloads.html">App Engine SDK</a>. On Windows simply use the default installation path. On Linux you can put it in /usr/local/google_appengine. On MacOS it should work if you put it in your Applications folder. Alternatively, on all systems you can add the google_appengine folder to your PATH (not PYTHONPATH) environment variable.</p>
+<p>Download the following zip files:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://bitbucket.org/wkornewald/django-nonrel/get/tip.zip">django-nonrel</a> (or <a class="reference external" href="https://bitbucket.org/wkornewald/django-nonrel">clone it</a>)</li>
+<li><a class="reference external" href="http://bitbucket.org/wkornewald/djangoappengine/get/tip.zip">djangoappengine</a> (or <a class="reference external" href="https://bitbucket.org/wkornewald/djangoappengine">clone it</a>)</li>
+<li><a class="reference external" href="http://bitbucket.org/wkornewald/djangotoolbox/get/tip.zip">djangotoolbox</a> (or <a class="reference external" href="https://bitbucket.org/wkornewald/djangotoolbox">clone it</a>)</li>
+<li><a class="reference external" href="http://bitbucket.org/twanschik/django-autoload/get/tip.zip">django-autoload</a> (or <a class="reference external" href="https://bitbucket.org/twanschik/django-autoload">clone it</a>)</li>
+<li><a class="reference external" href="http://bitbucket.org/wkornewald/django-dbindexer/get/tip.zip">django-dbindexer</a> (or <a class="reference external" href="https://bitbucket.org/wkornewald/django-dbindexer">clone it</a>)</li>
+<li><a class="reference external" href="http://bitbucket.org/wkornewald/django-testapp/get/tip.zip">django-testapp</a> (or <a class="reference external" href="https://bitbucket.org/wkornewald/django-testapp">clone it</a>)</li>
+</ul>
+<p>Unzip everything.</p>
+<p>The django-testapp folder contains a sample project to get you started. If you want to start a new project or port an existing Django project you can just copy all &#8221;.py&#8221; and &#8221;.yaml&#8221; files from the root folder into your project and adapt settings.py and app.yaml to your needs.</p>
+<p>Copy the following folders into your project (e.g., django-testapp):</p>
+<ul class="simple">
+<li>django-nonrel/django =&gt; <tt class="docutils literal"><span class="pre">&lt;project&gt;</span></tt>/django</li>
+<li>djangotoolbox/djangotoolbox =&gt; <tt class="docutils literal"><span class="pre">&lt;project&gt;</span></tt>/djangotoolbox</li>
+<li>django-autoload/autoload =&gt; <tt class="docutils literal"><span class="pre">&lt;project&gt;</span></tt>/autoload</li>
+<li>django-dbindexer/dbindexer =&gt; <tt class="docutils literal"><span class="pre">&lt;project&gt;</span></tt>/dbindexer</li>
+<li>djangoappengine =&gt; <tt class="docutils literal"><span class="pre">&lt;project&gt;</span></tt>/djangoappengine</li>
+</ul>
+<p>That&#8217;s it. Your project structure should look like this:</p>
+<ul class="simple">
+<li>&lt;project&gt;/django</li>
+<li>&lt;project&gt;/djangotoolbox</li>
+<li>&lt;project&gt;/autoload</li>
+<li>&lt;project&gt;/dbindexer</li>
+<li>&lt;project&gt;/djangoappengine</li>
+</ul>
+<p>Alternatively, you can of course clone the respective repositories and create symbolic links instead of copying the folders to your project. That might be easier if you have a lot of projects and don&#8217;t want to update each one manually.</p>
+</div>
+<div class="section" id="management-commands">
+<h2>Management commands<a class="headerlink" href="#management-commands" title="Permalink to this headline">¶</a></h2>
+<p>You can directly use Django&#8217;s manage.py commands. For example, run <tt class="docutils literal"><span class="pre">manage.py</span> <span class="pre">createsuperuser</span></tt> to create a new admin user and <tt class="docutils literal"><span class="pre">manage.py</span> <span class="pre">runserver</span></tt> to start the development server.</p>
+<p><strong>Important:</strong>  Don&#8217;t use dev_appserver.py directly. This won&#8217;t work as expected because <tt class="docutils literal"><span class="pre">manage.py</span> <span class="pre">runserver</span></tt> uses a customized dev_appserver.py configuration. Also, never run <tt class="docutils literal"><span class="pre">manage.py</span> <span class="pre">runserver</span></tt> together with other management commands at the same time. The changes won&#8217;t take effect. That&#8217;s an App Engine SDK limitation which might get fixed in a later release.</p>
+<p>With djangoappengine you get a few extra manage.py commands:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">manage.py</span> <span class="pre">remote</span></tt> allows you to execute a command on the production database (e.g., <tt class="docutils literal"><span class="pre">manage.py</span> <span class="pre">remote</span> <span class="pre">shell</span></tt> or <tt class="docutils literal"><span class="pre">manage.py</span> <span class="pre">remote</span> <span class="pre">createsuperuser</span></tt>)</li>
+<li><tt class="docutils literal"><span class="pre">manage.py</span> <span class="pre">deploy</span></tt> uploads your project to App Engine (use this instead of <tt class="docutils literal"><span class="pre">appcfg.py</span> <span class="pre">update</span></tt>)</li>
+</ul>
+<p>Note that you can only use <tt class="docutils literal"><span class="pre">manage.py</span> <span class="pre">remote</span></tt> if your app is deployed and if you have enabled authentication via the Google Accounts API in your app settings in the App Engine Dashboard. Also, if you use a custom app.yaml you have to make sure that it contains the remote_api handler.</p>
+</div>
+<div class="section" id="supported-and-unsupported-features">
+<h2>Supported and unsupported  features<a class="headerlink" href="#supported-and-unsupported-features" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="field-types">
+<h3>Field types<a class="headerlink" href="#field-types" title="Permalink to this headline">¶</a></h3>
+<p>All Django field types are fully supported except for the following:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">ImageField</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">ManyToManyField</span></tt></li>
+</ul>
+<p>The following Django field options have no effect on App Engine:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">unique</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">unique_for_date</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">unique_for_month</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">unique_for_year</span></tt></li>
+</ul>
+<p>Additionally <a class="reference external" href="http://www.allbuttonspressed.com/projects/djangotoolbox">djangotoolbox</a> provides non-Django field types in <tt class="docutils literal"><span class="pre">djangotoolbox.fields</span></tt> which you can use on App Engine or other non-relational databases. These are</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">ListField</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">BlobField</span></tt></li>
+</ul>
+<p>The following App Engine properties can be emulated by using a <tt class="docutils literal"><span class="pre">CharField</span></tt> in Django-nonrel:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">CategoryProperty</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">LinkProperty</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">EmailProperty</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">IMProperty</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">PhoneNumberProperty</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">PostalAddressProperty</span></tt></li>
+</ul>
+</div>
+<div class="section" id="queryset-methods">
+<h3>QuerySet methods<a class="headerlink" href="#queryset-methods" title="Permalink to this headline">¶</a></h3>
+<p>You can use the following field lookup types on all Fields except on <tt class="docutils literal"><span class="pre">TextField</span></tt> (unless you use <a class="reference internal" href="#indexes">indexes</a>) and <tt class="docutils literal"><span class="pre">BlobField</span></tt></p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">__exact</span></tt> equal to (the default)</li>
+<li><tt class="docutils literal"><span class="pre">__lt</span></tt> less than</li>
+<li><tt class="docutils literal"><span class="pre">__lte</span></tt> less than or equal to</li>
+<li><tt class="docutils literal"><span class="pre">__gt</span></tt> greater than</li>
+<li><tt class="docutils literal"><span class="pre">__gte</span></tt> greater than or equal to</li>
+<li><tt class="docutils literal"><span class="pre">__in</span></tt> (up to 500 values on primary keys and 30 on other fields)</li>
+<li><tt class="docutils literal"><span class="pre">__range</span></tt> inclusive on both boundaries</li>
+<li><tt class="docutils literal"><span class="pre">__startswith</span></tt> needs a composite index if combined with other filters</li>
+<li><tt class="docutils literal"><span class="pre">__year</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">__isnull</span></tt> requires <a class="reference external" href="http://www.allbuttonspressed.com/projects/django-dbindexer">django-dbindexer</a> to work correctly on <tt class="docutils literal"><span class="pre">ForeignKey</span></tt> (you don&#8217;t have to define any indexes for this to work)</li>
+</ul>
+<p>Using <a class="reference external" href="http://www.allbuttonspressed.com/projects/django-dbindexer">django-dbindexer</a> all remaining lookup types will automatically work too!</p>
+<p>Additionally, you can use</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">QuerySet.exclude()</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">Queryset.values()</span></tt> (only efficient on primary keys)</li>
+<li><tt class="docutils literal"><span class="pre">Q</span></tt>-objects</li>
+<li><tt class="docutils literal"><span class="pre">QuerySet.count()</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">QuerySet.reverse()</span></tt></li>
+<li>...</li>
+</ul>
+<p>In all cases you have to keep general App Engine restrictions in mind.</p>
+<p>Model inheritance only works with <a class="reference external" href="http://docs.djangoproject.com/en/dev/topics/db/models/#abstract-base-classes">abstract base classes</a>:</p>
+<div class="highlight-python"><pre>class MyModel(models.Model):
+    # ... fields ...
+    class Meta:
+        abstract = True # important!
+
+class ChildModel(MyModel):
+    # works</pre>
+</div>
+<p>In contrast, <a class="reference external" href="http://docs.djangoproject.com/en/dev/topics/db/models/#multi-table-inheritance">multi-table inheritance</a> (i.e. inheritance from non-abstract models) will result in query errors. That&#8217;s because multi-table inheritance, as the name implies, creates separate tables for each model in the inheritance hierarchy, so it requires JOINs to merge the results. This is not the same as <a class="reference external" href="http://docs.djangoproject.com/en/dev/topics/db/models/#multiple-inheritance">multiple inheritance</a> which is supported as long as you use abstract parent models.</p>
+<p>Many advanced Django features are not supported at the moment. A few of them are:</p>
+<ul class="simple">
+<li>JOINs (with django-dbindexer simple JOINs will work)</li>
+<li>many-to-many relations</li>
+<li>aggregates</li>
+<li>transactions (but you can use <tt class="docutils literal"><span class="pre">run_in_transaction()</span></tt> from App Engine&#8217;s SDK)</li>
+<li><tt class="docutils literal"><span class="pre">QuerySet.select_related()</span></tt></li>
+</ul>
+</div>
+<div class="section" id="other">
+<h3>Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h3>
+<p>Additionally, the following features from App Engine are not supported:</p>
+<ul class="simple">
+<li>entity groups (we don&#8217;t yet have a <tt class="docutils literal"><span class="pre">GAEPKField</span></tt>, but it should be trivial to add)</li>
+<li>batch puts (it&#8217;s technically possible, but nobody found the time/need to implement it, yet)</li>
+</ul>
+</div>
+</div>
+<div class="section" id="indexes">
+<h2>Indexes<a class="headerlink" href="#indexes" title="Permalink to this headline">¶</a></h2>
+<p>It&#8217;s possible to specify which fields should be indexed and which not. This also includes the possibility to convert a <tt class="docutils literal"><span class="pre">TextField</span></tt> into an indexed field like <tt class="docutils literal"><span class="pre">CharField</span></tt>. You can read more about this feature in our blog post <a class="reference external" href="http://www.allbuttonspressed.com/blog/django/2010/07/Managing-per-field-indexes-on-App-Engine">Managing per-field indexes on App Engine</a>.</p>
+</div>
+<div class="section" id="email-handling">
+<h2>Email handling<a class="headerlink" href="#email-handling" title="Permalink to this headline">¶</a></h2>
+<p>You can (and should) use Django&#8217;s mail API instead of App Engine&#8217;s mail API. The App Engine email backend is already enabled in the default settings (<tt class="docutils literal"><span class="pre">from</span> <span class="pre">djangoappengine.settings_base</span> <span class="pre">import</span> <span class="pre">*</span></tt>). By default, emails will be deferred to a background task on the production server.</p>
+</div>
+<div class="section" id="cache-api">
+<h2>Cache API<a class="headerlink" href="#cache-api" title="Permalink to this headline">¶</a></h2>
+<p>You can (and should) use Django&#8217;s cache API instead of App Engine&#8217;s memcache module. The memcache backend is already enabled in the default settings.</p>
+</div>
+<div class="section" id="sessions">
+<h2>Sessions<a class="headerlink" href="#sessions" title="Permalink to this headline">¶</a></h2>
+<p>You can use Django&#8217;s session API in your code. The <tt class="docutils literal"><span class="pre">cached_db</span></tt> session backend is already enabled in the default settings.</p>
+</div>
+<div class="section" id="authentication">
+<h2>Authentication<a class="headerlink" href="#authentication" title="Permalink to this headline">¶</a></h2>
+<p>You can (and probably should) use <tt class="docutils literal"><span class="pre">django.contrib.auth</span></tt> directly in your code. We don&#8217;t recommend to use App Engine&#8217;s Google Accounts API. This will lock you into App Engine unnecessarily. Use Django&#8217;s auth API, instead. If you want to support Google Accounts you can do so via OpenID. Django has several apps which provide OpenID support via Django&#8217;s auth API. This also allows you to support Yahoo and other login options in the future and you&#8217;re independent of App Engine. Take a look at <a class="reference external" href="https://sites.google.com/site/oauthgoog/Home/openidsamplesite">Google OpenID Sample Store</a> to see an example of what OpenID login for Google Accounts looks like.</p>
+<p>Note that username uniqueness is only checked at the form level (and by Django&#8217;s model validation API if you explicitly use that). Since App Engine doesn&#8217;t support uniqueness constraints at the DB level it&#8217;s possible, though very unlikely, that two users register the same username at exactly the same time. Your registration confirmation/activation mechanism (i.e., user receives mail to activate his account) must handle such cases correctly. For example, the activation model could store the username as its primary key, so you can be sure that only one of the created users is activated.</p>
+</div>
+<div class="section" id="file-uploads-downloads">
+<h2>File uploads/downloads<a class="headerlink" href="#file-uploads-downloads" title="Permalink to this headline">¶</a></h2>
+<p>See <a class="reference external" href="http://www.allbuttonspressed.com/projects/django-filetransfers">django-filetransfers</a> for an abstract file upload/download API for <tt class="docutils literal"><span class="pre">FileField</span></tt> which works with the <a class="reference external" href="http://code.google.com/appengine/docs/python/blobstore/">Blobstore</a> and X-Sendfile and other solutions. The required backends for the App Engine Blobstore are already enabled in the default settings.</p>
+</div>
+<div class="section" id="background-tasks">
+<h2>Background tasks<a class="headerlink" href="#background-tasks" title="Permalink to this headline">¶</a></h2>
+<p><strong>Contributors:</strong> We&#8217;ve started an experimental API for abstracting background tasks, so the same code can work with App Engine and Celery and others. Please help us finish and improve the API here: <a class="reference external" href="https://bitbucket.org/wkornewald/django-defer">https://bitbucket.org/wkornewald/django-defer</a></p>
+<p>Make sure that your <tt class="docutils literal"><span class="pre">app.yaml</span></tt> specifies the correct <tt class="docutils literal"><span class="pre">deferred</span></tt> handler. It should be:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">url</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/_ah/queue/deferred</span>
+  <span class="l-Scalar-Plain">script</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">djangoappengine/deferred/handler.py</span>
+  <span class="l-Scalar-Plain">login</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">admin</span>
+</pre></div>
+</div>
+<p>This custom handler initializes <tt class="docutils literal"><span class="pre">djangoappengine</span></tt> before it passes the request to App Engine&#8217;s internal <tt class="docutils literal"><span class="pre">deferred</span></tt> handler.</p>
+</div>
+<div class="section" id="dbindexer-index-definitions">
+<h2>dbindexer index definitions<a class="headerlink" href="#dbindexer-index-definitions" title="Permalink to this headline">¶</a></h2>
+<p>By default, djangoappengine installs <tt class="docutils literal"><span class="pre">__iexact</span></tt> indexes on <tt class="docutils literal"><span class="pre">User.username</span></tt> and <tt class="docutils literal"><span class="pre">User.email</span></tt>.</p>
+</div>
+<div class="section" id="high-replication-datastore-settings">
+<h2>High-replication datastore settings<a class="headerlink" href="#high-replication-datastore-settings" title="Permalink to this headline">¶</a></h2>
+<p>In order to use <tt class="docutils literal"><span class="pre">manage.py</span> <span class="pre">remote</span></tt> with the high-replication datastore you need to add the following to the top of your <tt class="docutils literal"><span class="pre">settings.py</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">djangoappengine.settings_base</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">DATABASES</span><span class="p">[</span><span class="s">&#39;default&#39;</span><span class="p">][</span><span class="s">&#39;HIGH_REPLICATION&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="app-engine-for-business">
+<h2>App Engine for Business<a class="headerlink" href="#app-engine-for-business" title="Permalink to this headline">¶</a></h2>
+<p>In order to use <tt class="docutils literal"><span class="pre">manage.py</span> <span class="pre">remote</span></tt> with the <tt class="docutils literal"><span class="pre">googleplex.com</span></tt> domain you need to add the following to the top of your <tt class="docutils literal"><span class="pre">settings.py</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">djangoappengine.settings_base</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">DATABASES</span><span class="p">[</span><span class="s">&#39;default&#39;</span><span class="p">][</span><span class="s">&#39;DOMAIN&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;googleplex.com&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="checking-whether-you-re-on-the-production-server">
+<h2>Checking whether you&#8217;re on the production server<a class="headerlink" href="#checking-whether-you-re-on-the-production-server" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">djangoappengine.utils</span> <span class="kn">import</span> <span class="n">on_production_server</span><span class="p">,</span> <span class="n">have_appserver</span>
+</pre></div>
+</div>
+<p>When you&#8217;re running on the production server <tt class="docutils literal"><span class="pre">on_production_server</span></tt> is <tt class="xref docutils literal"><span class="pre">True</span></tt>. When you&#8217;re running either the development or production server <tt class="docutils literal"><span class="pre">have_appserver</span></tt> is <tt class="xref docutils literal"><span class="pre">True</span></tt> and for any other <tt class="docutils literal"><span class="pre">manage.py</span></tt> command it&#8217;s <tt class="xref docutils literal"><span class="pre">False</span></tt>.</p>
+</div>
+<div class="section" id="zip-packages">
+<h2>Zip packages<a class="headerlink" href="#zip-packages" title="Permalink to this headline">¶</a></h2>
+<p><strong>Important:</strong> Your instances will load slower when using zip packages because zipped Python files are not precompiled. Also, i18n doesn&#8217;t work with zip packages. Zipping should only be a <strong>last resort</strong>! If you hit the 3000 files limit you should better try to reduce the number of files by, e.g., deleting unused packages from Django&#8217;s &#8220;contrib&#8221; folder. Only when <strong>nothing</strong> (!) else works you should consider zip packages.</p>
+<p>Since you can&#8217;t upload more than 3000 files on App Engine you sometimes have to create zipped packages. Luckily, djangoappengine can help you with integrating those zip packages. Simply create a &#8220;zip-packages&#8221; directory in your project folder and move your zip packages there. They&#8217;ll automatically get added to <tt class="docutils literal"><span class="pre">sys.path</span></tt>.</p>
+<p>In order to create a zip package simply select a Python package (e.g., a Django app) and zip it. However, keep in mind that only Python modules can be loaded transparently from such a zip file. You can&#8217;t easily access templates and JavaScript files from a zip package, for example. In order to be able to access the templates you should move the templates into your global &#8220;templates&#8221; folder within your project before zipping the Python package.</p>
+</div>
+<div class="section" id="contribute">
+<h2>Contribute<a class="headerlink" href="#contribute" title="Permalink to this headline">¶</a></h2>
+<p>If you want to help with implementing a missing feature or improving something please fork the <a class="reference external" href="http://bitbucket.org/wkornewald/djangoappengine">source</a> and send a pull request via BitBucket or a patch to the <a class="reference external" href="http://groups.google.com/group/django-non-relational">discussion group</a>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">djangoappengine - Django App Engine backends (DB, email, etc.)</a><ul>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#management-commands">Management commands</a></li>
+<li><a class="reference internal" href="#supported-and-unsupported-features">Supported and unsupported  features</a><ul>
+<li><a class="reference internal" href="#field-types">Field types</a></li>
+<li><a class="reference internal" href="#queryset-methods">QuerySet methods</a></li>
+<li><a class="reference internal" href="#other">Other</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indexes">Indexes</a></li>
+<li><a class="reference internal" href="#email-handling">Email handling</a></li>
+<li><a class="reference internal" href="#cache-api">Cache API</a></li>
+<li><a class="reference internal" href="#sessions">Sessions</a></li>
+<li><a class="reference internal" href="#authentication">Authentication</a></li>
+<li><a class="reference internal" href="#file-uploads-downloads">File uploads/downloads</a></li>
+<li><a class="reference internal" href="#background-tasks">Background tasks</a></li>
+<li><a class="reference internal" href="#dbindexer-index-definitions">dbindexer index definitions</a></li>
+<li><a class="reference internal" href="#high-replication-datastore-settings">High-replication datastore settings</a></li>
+<li><a class="reference internal" href="#app-engine-for-business">App Engine for Business</a></li>
+<li><a class="reference internal" href="#checking-whether-you-re-on-the-production-server">Checking whether you&#8217;re on the production server</a></li>
+<li><a class="reference internal" href="#zip-packages">Zip packages</a></li>
+<li><a class="reference internal" href="#contribute">Contribute</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="All Buttons Pressed - CMS &amp; blog for Django-nonrel.html"
+                        title="previous chapter">All Buttons Pressed Blog Sample Project</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="django-autoload.html"
+                        title="next chapter">django-autoload</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/content/djangoappengine - Django App Engine backends (DB, email, etc.).txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="django-autoload.html" title="django-autoload"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="All Buttons Pressed - CMS & blog for Django-nonrel.html" title="All Buttons Pressed Blog Sample Project"
+             >previous</a> |</li>
+        <li><a href="../index.html">Django-nonrel v0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Tom Brander.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
