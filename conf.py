@@ -25,7 +25,7 @@ import sys, os
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest', 'sphinx.ext.intersphinx', 'sphinx.ext.todo']
+extensions = ['sphinx.ext.intersphinx']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -41,7 +41,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Django-nonrel'
-copyright = u'2011, Tom Brander'
+copyright = u'2011 the Django-nonrel team'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -67,7 +67,7 @@ release = '0'
 exclude_patterns = ['_build']
 
 # The reST default role (used for this markup: `text`) to use for all documents.
-#default_role = None
+default_role = 'literal'
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
 #add_function_parentheses = True
@@ -179,7 +179,7 @@ htmlhelp_basename = 'Django-nonreldoc'
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'Django-nonrel.tex', u'Django-nonrel Documentation',
-   u'Tom Brander', 'manual'),
+   u'The Django-nonrel team', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -212,7 +212,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'django-nonrel', u'Django-nonrel Documentation',
-     [u'Tom Brander'], 1)
+     [u'The Django-nonrel team'], 1)
 ]
 
 
