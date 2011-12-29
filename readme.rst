@@ -9,7 +9,7 @@ I suspect that we will want to put the docs with the project components over tim
 
 To build the docs, first install `Sphinx`_::
 
-	easy_install sphinx
+	pip install sphinx
 
 Then build::
 
