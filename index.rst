@@ -7,18 +7,18 @@ The Django-nonrel project is split into several sub-projects:
 
 * Django-nonrel "itself" --- a version of Django 1.3.1 with
   :doc:`some small changes <nonrel-differences>` to make things NoSQL compatible
-* :doc:`djangotoolbox` --- a set of utilities for developing applications against
+* :doc:`djangotoolbox/index` --- a set of utilities for developing applications against
   Django-nonrel -- most notably, it provides model fields like :class:`ListField`
   and :class:`EmbeddedModelField`.
 * Our database backends, currently being
 
-  - djangoappengine_, the backend for `Google App Engine`_, and
+  - :doc:`djangoappengine/index`, the backend for `Google App Engine`_, and
   - `Django MongoDB Engine`_, the backend for MongoDB_.
 
 
 Other related tools are:
 
-* :doc:`django-dbindexer` --- abstracts away the differences between relational
+* :doc:`django-dbindexer/index` --- abstracts away the differences between relational
   and non-relational databases at the cost of (storage) efficiency,
   e.g. by using denormalization to emulate JOINs or by storing an additional
   lower-cased version of each string to allow for case-insensitive comparison
@@ -37,8 +37,9 @@ Contents
    troubleshooting
    porting
 
-   djangotoolbox
-   django-dbindexer
+   djangotoolbox/index
+   djangoappengine/index
+   django-dbindexer/index
 
    contributing
    
@@ -50,7 +51,6 @@ Contents
 
    /content/Django-nonrel - NoSQL support for Django
    /content/All Buttons Pressed - CMS & blog for Django-nonrel
-   /content/djangoappengine - Django App Engine backends (DB, email, etc.)
    /content/django-autoload
    /content/django-dbindexer - Expressive NoSQL
    /content/django-filetransfers - File upload-download abstraction
