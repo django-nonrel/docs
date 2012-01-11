@@ -10,9 +10,11 @@ Cascade deletes
 
 JOINs
 -----
-* only some simple cases may be emulated (through django-dbindexer_))
-* this results in ManyToMany fields and lookups that span relationships being unavailable (TODO: Anything more?)
+* only some simple cases may be emulated (through django-dbindexer_)
+* this results in ManyToMany fields and lookups that span relationships being unavailable
 * use ListFields and EmbeddedModelFields to model your data instead
+
+.. TODO: Are there any more things not working due to lack of joins?
 
 Indexes
 --------
@@ -31,8 +33,8 @@ Transactions
 ------------
 * Django's transactions API is not usable
 * some back-end-specific solutions may be available:
-    * MongoDB [atomic operations](http://django-mongodb.org/topics/atomic-updates.html)
-    * GAE [entity groups](https://github.com/django-nonrel/djangoappengine/pull/10)
+    * `MongoDB atomic operations <http://django-mongodb.org/topics/atomic-updates.html>`_
+    * `Google App Engine entity groups <https://github.com/django-nonrel/djangoappengine/pull/10>`_
 
 Contrib modules
 ---------------
