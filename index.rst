@@ -54,7 +54,6 @@ Contents
    /content/django-autoload
    /content/django-dbindexer - Expressive NoSQL
    /content/django-filetransfers - File upload-download abstraction
-   /content/django-mediagenerator asset manager
    /content/djangotoolbox
    /content/HTML5 offline manifests with django-mediagenerator
    /content/Managing per-field indexes on App Engine
