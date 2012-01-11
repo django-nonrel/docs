@@ -6,7 +6,7 @@ Django-nonrel is a fork of Django_ that adds support for NoSQL databases.
 The Django-nonrel project is split into several sub-projects:
 
 * Django-nonrel "itself" --- a version of Django 1.3.1 with
-  :doc:`some small changes <nonrel-differences>` to make things NoSQL compatible
+  :doc:`some small changes <differences>` to make things NoSQL compatible
 * :doc:`djangotoolbox/index` --- a set of utilities for developing applications against
   Django-nonrel -- most notably, it provides model fields like :class:`ListField`
   and :class:`EmbeddedModelField`.
@@ -36,6 +36,7 @@ Contents
    schema-design
    troubleshooting
    porting
+   differences
 
    djangotoolbox/index
    djangoappengine/index
