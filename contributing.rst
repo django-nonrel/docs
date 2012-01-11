@@ -27,13 +27,13 @@ place for general feedback, discussion and support.
 .. _contributing/bug-reports:
 
 Bug Reports
-...........
+-----------
 Bugs can be reported to our `ticket tracker on GitHub`_.
 
 .. _contributing/patches:
 
 Patches
-.......
+-------
 The most comfortable way to get your changes into Django-nonrel is to
 use `GitHub's pull requests`_. It's perfectly fine, however, to send regular
 patches to :ref:`the mailing list <contributing/mailing-list>`.
@@ -50,7 +50,7 @@ from time to time.
 Push new code to a feature branch and create a pull request, so
 others can review and test your changes before they are merged into 'develop'.
 
-You could do the following to setup your coding environment::
+You could do the following to set your coding environment up::
 
     git clone git@github.com:django-nonrel/django-nonrel
     git checkout master
@@ -73,11 +73,13 @@ Push the branch::
 
 Please, use `Django's coding style`_ in your code (this includes using `PEP 8`_ as a guideline).
 
+.. TODO: Please, review notes on git flow and coding style.
+
 
 .. _mailing list: http://groups.google.com/group/django-non-relational
 .. _on GitHub: https://github.com/django-nonrel
 .. _ticket tracker on GitHub: https://github.com/organizations/django-nonrel/dashboard/issues/repos?state=open
 .. _GitHub's pull requests: http://help.github.com/pull-requests/
-.._ git flow: http://jeffkreeftmeijer.com/2010/why-arent-you-using-git-flow/
+.. _git flow: http://jeffkreeftmeijer.com/2010/why-arent-you-using-git-flow/
 .. _Django's coding style: https://docs.djangoproject.com/en/dev/internals/contributing/writing-code/coding-style/
 .. _PEP 8: http://www.python.org/dev/peps/pep-0008

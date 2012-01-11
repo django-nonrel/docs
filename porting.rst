@@ -19,7 +19,8 @@ Indexes
 * you'll likely need to an index for each "select-like" query you make (through filter(), order_by() or field lookups)
 * some back-ends can handle this semi-automatically (e.g. GAE dev server)
 * some filters are not supported natively and require registering an index with dbindexer -- storing additional data (e.g. iexact, endswith with GAE)
-(TODO: Is this true for Mongo too?)
+
+.. TODO: Is this true for Mongo too?
 
 Aggregates
 ----------
