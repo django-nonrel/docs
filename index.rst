@@ -35,9 +35,6 @@ NoSQL database backends and their related bits:
     efficiency. Examples of what it does is denormalizing data to
     emulate JOINs, or store additional lower-cased versions of strings
     to allow for case-insensitive comparison.
-  - django-filetransfers_ extends Django's file storage API in order
-    to fully support file uploads and downloads on any cloud storage
-    provider (App Engine, Amazon S3, ...)
   - :doc:`mongodb-cache/index` is a cache backend similar to Django's
     built-in database cache backend, but for MongoDB rather than for
     SQL databases.
