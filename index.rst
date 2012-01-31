@@ -13,14 +13,13 @@ NoSQL database backends and their related bits:
 * Common parts of the Django-nonrel project (the bits independent of
   the database backend):
 
-  - Django-nonrel the software: :doc:`a series of patches
-    <differences>` applied to vanilla Django 1.3.1 in order to enable
-    the use of NoSQL databases with Django.
+  - Django-nonrel the software is what we get if we apply :doc:`a
+    series of patches <differences>` to Django 1.3.1.
 
-  - :doc:`djangotoolbox/index`: a set of utilities for developing
+  - :doc:`djangotoolbox/index` is a set of utilities for developing
     applications with Django-nonrel e.g. it provides model fields such
     as :class:`ListField` and :class:`EmbeddedModelField` which are
-    used by :doc:`mongodb-engine/index` for example.
+    used by :doc:`mongodb-engine/index`.
 
 * Django-aware wrappers around the actual database drivers:
 
@@ -63,22 +62,6 @@ Contents
    mongodb-cache/index
 
    contributing
-
-
-(Old TOC:)
-
-.. toctree::
-   :maxdepth: 1
-
-   /content/Django-nonrel - NoSQL support for Django
-   /content/All Buttons Pressed - CMS & blog for Django-nonrel
-   /content/django-autoload
-   /content/django-dbindexer - Expressive NoSQL
-   /content/django-filetransfers - File upload-download abstraction
-   /content/djangotoolbox
-   /content/HTML5 offline manifests with django-mediagenerator
-   /content/Managing per-field indexes on App Engine
-   /content/Writing a non-relational Django backend
 
 .. _Django: http://djangoproject.com
 .. _Google App Engine: http://code.google.com/appengine
